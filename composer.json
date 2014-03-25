@@ -1,0 +1,24 @@
+{
+    "name": "mitch/laravel-doctrine",
+    "description": "Doctrine implementation for Laravel 4",
+    "keywords": ["doctrine", "laravel"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mitchell van Wijngaarden",
+            "email": "hey@mitchellvanwijngaarwden.nl"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "4.1.*",
+        "doctrine/orm": "2.5.*",
+        "doctrine/migrations": "1.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mitch\\LaravelDoctrine\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
