@@ -54,13 +54,13 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         $this->app->bind('Doctrine\ORM\EntityManagerInterface', 'Doctrine\ORM\EntityManager');
     }
 
-	/**
-	 * Get the services provided by the provider.
-	 *
-	 * @return array
-	 */
-	public function provides()
-	{
-		return ['Doctrine\ORM\EntityManager'];
-	}
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return ['Doctrine\ORM\EntityManager'];
+    }
 }
