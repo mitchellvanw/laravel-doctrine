@@ -23,6 +23,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         $this->package('mitch/laravel-doctrine', 'doctrine', __DIR__.'/..');
 
         $this->registerEntityManager();
+        $this->registerClassMetadataFactory();
 
         $this->commands([
             'Mitch\LaravelDoctrine\Console\SchemaCreateCommand',
@@ -51,7 +52,14 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             }
             return EntityManager::create($config['connection'], $metadata);
         });
-        $this->app->bind('Doctrine\ORM\EntityManagerInterface', 'Doctrine\ORM\EntityManager');
+        $this->app->singleton('Doctrine\ORM\EntityManagerInterface', 'Doctrine\ORM\EntityManager');
+    }
+
+    private function registerClassMetadataFactory()
+    {
+        $this->app->singleton('Doctrine\ORM\Mapping\ClassMetadataFactory', function($app) {
+            return $app['Doctrine\ORM\EntityManager']->getMetadataFactory();
+        });
     }
 
     /**
@@ -61,6 +69,26 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return ['Doctrine\ORM\EntityManager'];
+        return [
+            'Doctrine\ORM\EntityManagerInterface',
+            'Doctrine\ORM\EntityManager',
+            'Doctrine\ORM\Mapping\ClassMetadataFactory',
+        ];
+    }
+
+    /**
+     * Map Laravel's to Doctrine's database config
+     *
+     * @param  $config
+     * @return array
+     */
+    private function mapConfig($config)
+    {
+        $doctrine = $config['doctrine::doctrine'];
+        $doctrine['connection']['host'] = $config->get('database.connections.mysql.host');
+        $doctrine['connection']['dbname'] = $config->get('database.connections.mysql.database');
+        $doctrine['connection']['user'] = $config->get('database.connections.mysql.username');
+        $doctrine['connection']['password'] = $config->get('database.connections.mysql.password');
+        return $doctrine;
     }
 }

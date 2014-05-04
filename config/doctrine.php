@@ -7,8 +7,8 @@ return [
     'connection' => [
         'driver'   => 'pdo_mysql',
         'host'     => 'localhost',
-        'database' => 'database',
-        'username' => 'root',
+        'dbname'   => 'database',
+        'user'     => 'root',
         'password' => '',
         'prefix'   => ''
     ],
@@ -33,11 +33,6 @@ return [
             'host' => '127.0.0.1',
             'port' => 11211
         ]
-    ],
-
-    'migrations' => [
-        'directory' => 'database/doctrine-migrations',
-        'table'     => 'doctrine_migrations'
     ],
 
     'repository' => 'Doctrine\ORM\EntityRepository',
