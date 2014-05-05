@@ -1,8 +1,11 @@
 <?php namespace Mitch\LaravelDoctrine;
 
+use Doctrine\ORM\Events;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Common\EventManager;
 use Doctrine\ORM\Tools\Setup;
 use Illuminate\Support\ServiceProvider;
+use Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener;
 
 class LaravelDoctrineServiceProvider extends ServiceProvider
 {
