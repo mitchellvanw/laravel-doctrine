@@ -1,6 +1,7 @@
 {
     "name": "mitch/laravel-doctrine",
     "description": "Doctrine implementation for Laravel 4",
+    "version": "0.2.0",
     "keywords": ["doctrine", "laravel"],
     "license": "MIT",
     "authors": [
@@ -21,9 +22,4 @@
         }
     },
     "minimum-stability": "dev",
-    "extra": {
-        "branch-alias": {
-            "dev-master": "0.1.x-dev"
-        }
-    }
 }
