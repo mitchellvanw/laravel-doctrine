@@ -43,6 +43,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
                 $config['proxy']['directory'],
                 $manager->getCache()
             );
+            $metadata->addFilter('trashed', 'Mitch\LaravelDoctrine\Filters\TrashedFilter');
             $metadata->setAutoGenerateProxyClasses($config['proxy']['auto_generate']);
             $metadata->setDefaultRepositoryClassName($config['repository']);
             $metadata->setSQLLogger($config['logger']);
@@ -50,7 +51,11 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             if (isset($config['proxy']['namespace'])) {
                 $metadata->setProxyNamespace($config['proxy']['namespace']);
             }
-            return EntityManager::create($config['connection'], $metadata);
+            $eventManager = new EventManager;
+            $eventManager->addEventListener(Events::onFlush, new SoftDeletableListener);
+            $entityManager = EntityManager::create($config['connection'], $metadata, $eventManager);
+            $entityManager->getFilters()->enable('trashed');
+            return $entityManager;
         });
         $this->app->singleton('Doctrine\ORM\EntityManagerInterface', 'Doctrine\ORM\EntityManager');
     }
