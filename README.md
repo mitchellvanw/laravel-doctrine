@@ -8,35 +8,35 @@ Begin by installing the package through Composer. Edit your project's `composer.
 
 > This package is still in it's early stages, but fully functional. Is it possible that the API might change slightly, no drastic changes.
 
-    ```php
-    "require": {
+```php
+"require": {
     "mitch/laravel-doctrine": "0.x"
-    }
-    ```
+}
+```
 
 Next use Composer to update your project from the the Terminal:
 
-    ```php
-    php composer.phar update
-    ```
+```php
+php composer.phar update
+```
 
 Once the package has been installed you'll need to add the service provider. Open your `app/config/app.php` configuration file, and add a new item to the `providers` array.
 
-    ```php
-    'Mitch\LaravelDoctrine\LaravelDoctrineServiceProvider'
-    ```
+```php
+'Mitch\LaravelDoctrine\LaravelDoctrineServiceProvider'
+```
 
 After This you'll need to add the facade. Open your `app/config/app.php` configuration file, and add a new item to the `aliases` array.
 
-    ```php
-    'EntityManager' => 'Mitch\LaravelDoctrine\EntityManagerFacade'
-    ```
+```php
+'EntityManager' => 'Mitch\LaravelDoctrine\EntityManagerFacade'
+```
 
 It's recommended to publish the package configuration.
 
-    ```php
-    php artisan config:publish mitch/laravel-doctrine --path=vendor/mitch/laravel-doctrine/config
-    ```
+```php
+php artisan config:publish mitch/laravel-doctrine --path=vendor/mitch/laravel-doctrine/config
+```
 
 ## How It Works
 
@@ -46,80 +46,80 @@ This package uses the Laravel database configuration and thus it works right out
 It might be wise to [check out the Doctrine docs](http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/index.html) to know how it works.
 The little example below shows how to use the EntityManager in it simplest form.
 
-    ```php
-    <?php
+```php
+<?php
 
-    $user = new User;
-    $user->setName('Mitchell');
+$user = new User;
+$user->setName('Mitchell');
 
-    EntityManager::persist($user);
-    EntityManager::flush();
-    ```
+EntityManager::persist($user);
+EntityManager::flush();
+```
 
 The `User` used in the example above looks like this.
 
-    ```php
-    <?php
+```php
+<?php
+
+/**
+ * @Entity
+ * @Table(name="users")
+*/
+class User
+{
+    /**
+     * @Id
+     * @GeneratedValue
+     * @Column(type="integer")
+    */
+    private $id;
 
     /**
-    * @Entity
-    * @Table(name="users")
+     * @Column(type="string")
     */
-    class User
+    private $name;
+
+    public function getId()
     {
-      /**
-       * @Id
-       * @GeneratedValue
-       * @Column(type="integer")
-       */
-      private $id;
-
-      /**
-       * @Column(type="string")
-       */
-      private $name;
-
-      public function getId()
-      {
-          return $this->id;
-      }
-
-      public function getName()
-      {
-          return $this->name;
-      }
-
-      public function setName($name)
-      {
-          $this->name = $name;
-      }
+        return $this->id;
     }
-    ```
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+}
+```
 
 If you've only used Eloquent and its models this might look bloated or frightening, but it's actually very simple. Let me break the class down.
 
-    ```php
-    <?php
+```php
+<?php
+
+/**
+ * @Entity
+ * @Table(name="users")
+*/
+class User
+{
+    /**
+     * @Id
+     * @GeneratedValue
+     * @Column(type="integer")
+    */
+    private $id;
 
     /**
-    * @Entity
-    * @Table(name="users")
+     * @Column(type="string")
     */
-    class User
-    {
-      /**
-       * @Id
-       * @GeneratedValue
-       * @Column(type="integer")
-       */
-      private $id;
-
-      /**
-       * @Column(type="string")
-       */
-      private $name;
-    }
-    ```
+    private $name;
+}
+```
 
 The only thing that's actually important in this `entity` are the properties. This shows you which data the `entity` holds.
 
@@ -133,93 +133,93 @@ When you add this trait and the `@HasLifecycleCallbacks()` annotation to your `e
 
 > Do remember that the database table of this entity needs to have the `created_at` and `updated_at` columns. If the trait has been added you can simply call the artisan command `doctrine:schema:update` to update your database schema.
 
-    ```php
-    <?php
+```php
+<?php
 
-    use Mitch\LaravelDoctrine\Traits\Timestamps;
+use Mitch\LaravelDoctrine\Traits\Timestamps;
+
+/**
+ * @Entity
+ * @Table(name="users")
+ * @HasLifecycleCallbacks()
+*/
+class User
+{
+    use Timestamps;
 
     /**
-    * @Entity
-    * @Table(name="users")
-    * @HasLifecycleCallbacks()
+     * @Id
+     * @GeneratedValue
+     * @Column(type="integer")
     */
-    class User
-    {
-      use Timestamps;
+    private $id;
 
-      /**
-       * @Id
-       * @GeneratedValue
-       * @Column(type="integer")
-       */
-      private $id;
-
-      /**
-       * @Column(type="string")
-       */
-      private $name;
-    }
-    ```
+    /**
+     * @Column(type="string")
+    */
+    private $name;
+}
+```
 
 ### Soft Deleting
 
 Soft Deletes is also one of those things I've added to this package to work right out of the box. It's the same thing like with `Timestamps`.
 Simply add the trait `SoftDeletes`, make sure the database table has the `deleted_at` column and you're good to go!
 
-    ```php
-    <?php
+```php
+<?php
 
-    use Mitch\LaravelDoctrine\Traits\SoftDeletes;
+use Mitch\LaravelDoctrine\Traits\SoftDeletes;
 
-    /**
-    * @Entity
-    * @Table(name="users")
-    */
-    class User
-    {
-      use SoftDeletes;
+/**
+ * @Entity
+ * @Table(name="users")
+*/
+class User
+{
+  use SoftDeletes;
 
-      /**
-       * @Id
-       * @GeneratedValue
-       * @Column(type="integer")
-       */
-      private $id;
+  /**
+    * @Id
+    * @GeneratedValue
+    * @Column(type="integer")
+   */
+  private $id;
 
-      /**
-       * @Column(type="string")
-       */
-      private $name;
-    }
-    ```
+  /**
+    * @Column(type="string")
+   */
+  private $name;
+}
+```
 
 ### Entity Manager
 
 The Entity Manager can accessed in multiple ways. One option is by using the `EntityManager` facade (or service locator).
 Other ways are by using the IoC container or constructor injection.
 
-    ```php
-    <?php
+```php
+<?php
 
-    $entityManager = App::make('Doctrine\ORM\EntityManager');
-    $entityManager = App::make('Doctrine\ORM\EntityManagerInterface');
-    ```
+$entityManager = App::make('Doctrine\ORM\EntityManager');
+$entityManager = App::make('Doctrine\ORM\EntityManagerInterface');
+```
 
-    ```php
-    <?php
+```php
+<?php
 
-    use Doctrine\ORM\EntityManager
+use Doctrine\ORM\EntityManager
 
-    class ExampleController extends Controller
+class ExampleController extends Controller
+{
+    private $entityManager;
+
+    public function __construct(EntityManager $entityManager)
     {
-        private $entityManager;
-
-        public function __construct(EntityManager $entityManager)
-        {
-            $this->entityManager = $entityManager;
-        }
+        $this->entityManager = $entityManager;
     }
-    ```
+}
+```
 
 ## Schemas
 
