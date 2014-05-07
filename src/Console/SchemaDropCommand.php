@@ -51,7 +51,7 @@ class SchemaDropCommand extends Command
     public function fire()
     {
         $sql = $this->tool->getDropSchemaSQL($this->metadata->getAllMetadata());
-        if ( ! isset($sql)) {
+        if (empty($sql)) {
             $this->info('Current models do not exist in schema.');
             return;
         }

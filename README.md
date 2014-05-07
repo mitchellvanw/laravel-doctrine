@@ -46,6 +46,8 @@ This package uses the Laravel database configuration and thus it works right out
 It might be wise to [check out the Doctrine docs](http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/index.html) to know how it works.
 The little example below shows how to use the EntityManager in it simplest form.
 
+> This package currently only supports MySQL. Other drivers will be added soon.
+
 ```php
 <?php
 

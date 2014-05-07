@@ -53,7 +53,7 @@ class SchemaUpdateCommand extends Command
         $this->info('Checking if database needs updating....');
         $clean = $this->option('clean');
         $sql = $this->tool->getUpdateSchemaSql($this->metadata->getAllMetadata(), $clean);
-        if ( ! isset($sql)) {
+        if (empty($sql)) {
             $this->info('No updates found.');
             return;
         }

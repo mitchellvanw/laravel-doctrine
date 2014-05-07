@@ -2,8 +2,8 @@
 
 use Doctrine\ORM\Events;
 use Doctrine\ORM\EntityManager;
-use Doctrine\Common\EventManager;
 use Doctrine\ORM\Tools\Setup;
+use Doctrine\Common\EventManager;
 use Illuminate\Support\ServiceProvider;
 use Mitch\LaravelDoctrine\CacheProviders;
 use Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener;
@@ -29,10 +29,10 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-//        $this->package('mitch/laravel-doctrine', 'doctrine', __DIR__.'/..');
         $this->registerCacheManager();
         $this->registerEntityManager();
         $this->registerClassMetadataFactory();
+        $this->registerDoctrineUserProvider();
 
         $this->commands([
             'Mitch\LaravelDoctrine\Console\SchemaCreateCommand',
@@ -88,6 +88,17 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         });
     }
 
+    private function registerDoctrineUserProvider()
+    {
+        $this->app['Illuminate\Auth\AuthManager']->extend('doctrine', function($app) {
+            return new DoctrineUserProvider(
+                $app['Illuminate\Hashing\HasherInterface'],
+                $app['Doctrine\ORM\EntityManager'],
+                $app['config']['auth.model']
+            );
+        });
+    }
+
     /**
      * Get the services provided by the provider.
      *
@@ -110,8 +121,8 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
      */
     private function getDatabaseConfig($config)
     {
-        $default = $config->get('database.default');
-        $database = $config->get("database.connections.{$default}");
+        $default = $config['database.default'];
+        $database = $config["database.connections.{$default}"];
         return [
             'driver'   => 'pdo_mysql',
             'host'     => $database['host'],
