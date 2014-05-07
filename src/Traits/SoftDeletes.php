@@ -22,6 +22,6 @@ trait SoftDeletes
 
     public function isDeleted()
     {
-        return $this->deletedAt !== null && $this->deletedAt > new DateTime;
+        return $this->deletedAt > new DateTime;
     }
 }
