@@ -5,6 +5,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\Tools\Setup;
 use Illuminate\Support\ServiceProvider;
+use Mitch\LaravelDoctrine\CacheProviders;
 use Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener;
 
 class LaravelDoctrineServiceProvider extends ServiceProvider
@@ -16,6 +17,11 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 	 */
 	protected $defer = false;
 
+    public function boot()
+    {
+        $this->package('mitch/laravel-doctrine', 'doctrine', __DIR__.'/..');
+    }
+
 	/**
 	 * Register the service provider.
 	 *
@@ -23,8 +29,8 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-        $this->package('mitch/laravel-doctrine', 'doctrine', __DIR__.'/..');
-
+//        $this->package('mitch/laravel-doctrine', 'doctrine', __DIR__.'/..');
+        $this->registerCacheManager();
         $this->registerEntityManager();
         $this->registerClassMetadataFactory();
 
@@ -35,16 +41,28 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         ]);
 	}
 
+    public function registerCacheManager()
+    {
+        $this->app->bind('Mitch\LaravelDoctrine\CacheManager', function($app) {
+            $manager = new CacheManager($app['config']['doctrine::doctrine.cache']);
+            $manager->add(new CacheProviders\ApcProvider);
+            $manager->add(new CacheProviders\MemcacheProvider);
+            $manager->add(new CacheProviders\RedisProvider);
+            $manager->add(new CacheProviders\XcacheProvider);
+            $manager->add(new CacheProviders\NullProvider);
+            return $manager;
+        });
+    }
+
     private function registerEntityManager()
     {
         $this->app->singleton('Doctrine\ORM\EntityManager', function($app) {
             $config = $app['config']['doctrine::doctrine'];
-            $manager = new CacheManager($config['provider'], $config['cache']);
             $metadata = Setup::createAnnotationMetadataConfiguration(
                 $config['metadata'],
                 $app['config']['app.debug'],
                 $config['proxy']['directory'],
-                $manager->getCache()
+                $app['Mitch\LaravelDoctrine\CacheManager']->getCache($config['cache_provider'])
             );
             $metadata->addFilter('trashed', 'Mitch\LaravelDoctrine\Filters\TrashedFilter');
             $metadata->setAutoGenerateProxyClasses($config['proxy']['auto_generate']);
@@ -56,7 +74,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             }
             $eventManager = new EventManager;
             $eventManager->addEventListener(Events::onFlush, new SoftDeletableListener);
-            $entityManager = EntityManager::create($config['connection'], $metadata, $eventManager);
+            $entityManager = EntityManager::create($this->getDatabaseConfig($app['config']), $metadata, $eventManager);
             $entityManager->getFilters()->enable('trashed');
             return $entityManager;
         });
@@ -90,13 +108,17 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
      * @param  $config
      * @return array
      */
-    private function mapConfig($config)
+    private function getDatabaseConfig($config)
     {
-        $doctrine = $config['doctrine::doctrine'];
-        $doctrine['connection']['host'] = $config->get('database.connections.mysql.host');
-        $doctrine['connection']['dbname'] = $config->get('database.connections.mysql.database');
-        $doctrine['connection']['user'] = $config->get('database.connections.mysql.username');
-        $doctrine['connection']['password'] = $config->get('database.connections.mysql.password');
-        return $doctrine;
+        $default = $config->get('database.default');
+        $database = $config->get("database.connections.{$default}");
+        return [
+            'driver'   => 'pdo_mysql',
+            'host'     => $database['host'],
+            'dbname'   => $database['database'],
+            'user'     => $database['username'],
+            'password' => $database['password'],
+            'prefix'   => $database['prefix'],
+        ];
     }
 }

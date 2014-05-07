@@ -5,8 +5,11 @@ use Memcache;
 
 class MemcacheProvider implements Provider
 {
-    public function provide($config = null)
+    public function make($config = null)
     {
+        if ( ! extension_loaded('memcache')) {
+            throw new \RuntimeException('Memcache extension was not loaded.');
+        }
         $memcache = new Memcache;
         $memcache->connect($config['host'], $config['port']);
 
@@ -14,4 +17,9 @@ class MemcacheProvider implements Provider
         $cache->setMemcache($memcache);
         return $cache;
     }
-} 
+
+    public function isAppropriate($provider)
+    {
+        return $provider == 'memcache';
+    }
+}

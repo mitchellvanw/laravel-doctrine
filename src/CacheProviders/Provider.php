@@ -2,5 +2,6 @@
 
 interface Provider
 {
-    public function provide($config = null);
+    public function make($config = null);
+    public function isAppropriate($provider);
 } 

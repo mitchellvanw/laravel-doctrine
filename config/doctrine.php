@@ -1,18 +1,6 @@
 <?php
 
 return [
-    // Available: APC, Xcache, Redis, Memcache
-    'provider' => null,
-
-    'connection' => [
-        'driver'   => 'pdo_mysql',
-        'host'     => 'localhost',
-        'dbname'   => 'database',
-        'user'     => 'root',
-        'password' => '',
-        'prefix'   => ''
-    ],
-
     'metadata' => [
         base_path('app/models')
     ],
@@ -22,6 +10,9 @@ return [
         'directory'     => null,
         'namespace'     => null
     ],
+
+    // Available: null, apc, xcache, redis, memcache
+    'cache_provider' => null,
 
     'cache' => [
         'redis' => [

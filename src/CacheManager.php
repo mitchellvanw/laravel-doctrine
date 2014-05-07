@@ -1,35 +1,33 @@
 <?php namespace Mitch\LaravelDoctrine; 
 
+use Mitch\LaravelDoctrine\CacheProviders\Provider;
+
 class CacheManager
 {
-    private $provider;
-    private $config;
+    private $providers = [];
 
-    public function __construct($provider, $config)
+    public function __construct($config)
     {
-        $this->provider = $provider;
         $this->config = $config;
     }
 
-    public function getCache()
+    public function getCache($type)
     {
-        return $this->provider ? $this->getCacheProvider($this->provider)->provide($this->getCacheConfig($this->provider)) : null;
+        foreach ($this->providers as $provider) {
+            if ($provider->isAppropriate($type)) {
+                return $provider->make($this->getConfig($type));
+            }
+        }
+        return null;
     }
 
-    private function getCacheProvider($provider)
+    private function getConfig($provider)
     {
-        $provider = ucfirst($provider);
-        $class = $this->getFullClassName("{$provider}Provider");
-        return new $class;
+        return isset($this->config[$provider]) ? $this->config[$provider] : null;
     }
 
-    private function getFullClassName($class)
+    public function add(Provider $provider)
     {
-        return "Mitch\\LaravelDoctrine\\CacheProviders\\{$class}";
-    }
-
-    private function getCacheConfig($provider)
-    {
-        return $this->config[$provider];
+        $this->providers[] = $provider;
     }
 } 
