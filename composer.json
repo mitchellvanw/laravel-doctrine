@@ -1,7 +1,7 @@
 {
     "name": "mitch/laravel-doctrine",
     "description": "A Doctrine implementation that melts with Laravel 4.",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "keywords": ["doctrine", "laravel"],
     "license": "MIT",
     "authors": [
