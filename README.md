@@ -1,6 +1,22 @@
 # Doctrine 2 for Laravel
 
+[![Latest Stable Version](https://poser.pugx.org/mitch/laravel-doctrine/version.png)](https://packagist.org/packages/mitch/laravel-doctrine)
+[![License](https://poser.pugx.org/mitch/laravel-doctrine/license.png)](https://packagist.org/packages/mitch/laravel-doctrine)
+[![Total Downloads](https://poser.pugx.org/mitch/laravel-doctrine/downloads.png)](https://packagist.org/packages/mitch/laravel-doctrine)
+
 A Doctrine 2 implementation that melts with Laravel 4.
+
+## Table of Contents
+
+- [Installation](#installation)
+- [How It Works](#how-it-works)
+    - [Basics](#basics)
+    - [Timestamps](#timestamps)
+    - [Soft Deleting](#soft-deleting)
+    - [Authentication](#authentication)
+    - [Entity Manager](#entity-manager)
+- [Schemas](#schemas)
+- [License](#license)
 
 ## Installation
 
