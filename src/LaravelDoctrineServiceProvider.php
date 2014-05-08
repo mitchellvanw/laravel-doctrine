@@ -63,7 +63,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
                 $app['config']['app.debug'],
                 $config['proxy']['directory'],
                 $app['Mitch\LaravelDoctrine\CacheManager']->getCache($config['cache_provider']),
-                false
+                $config['simple_annotations']
             );
             $metadata->addFilter('trashed', 'Mitch\LaravelDoctrine\Filters\TrashedFilter');
             $metadata->setAutoGenerateProxyClasses($config['proxy']['auto_generate']);
