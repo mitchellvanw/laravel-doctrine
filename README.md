@@ -1,6 +1,6 @@
-# Doctrine for Laravel
+# Doctrine 2 for Laravel
 
-A Doctrine implementation that melts with Laravel 4.
+A Doctrine 2 implementation that melts with Laravel 4.
 
 ## Installation
 
