@@ -63,21 +63,23 @@ The `User` used in the example above looks like this.
 ```php
 <?php
 
+use Doctrine\ORM\Mapping AS ORM;
+
 /**
- * @Entity
- * @Table(name="users")
+ * @ORM\Entity
+ * @ORM\Table(name="users")
  */
 class User
 {
     /**
-     * @Id
-     * @GeneratedValue
-     * @Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
-     * @Column(type="string")
+     * @ORM\Column(type="string")
      */
     private $name;
 
@@ -103,21 +105,23 @@ If you've only used Eloquent and its models this might look bloated or frighteni
 ```php
 <?php
 
+use Doctrine\ORM\Mapping AS ORM;
+
 /**
- * @Entity
- * @Table(name="users")
+ * @ORM\Entity
+ * @ORM\Table(name="users")
  */
 class User
 {
     /**
-     * @Id
-     * @GeneratedValue
-     * @Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
-     * @Column(type="string")
+     * @ORM\Column(type="string")
      */
     private $name;
 }
@@ -138,26 +142,27 @@ When you add this trait and the `@HasLifecycleCallbacks()` annotation to your `e
 ```php
 <?php
 
+use Doctrine\ORM\Mapping AS ORM;
 use Mitch\LaravelDoctrine\Traits\Timestamps;
 
 /**
- * @Entity
- * @Table(name="users")
- * @HasLifecycleCallbacks()
+ * @ORM\Entity
+ * @ORM\Table(name="users")
+ * @ORM\HasLifecycleCallbacks()
  */
 class User
 {
     use Timestamps;
 
     /**
-     * @Id
-     * @GeneratedValue
-     * @Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
-     * @Column(type="string")
+     * @ORM\Column(type="string")
      */
     private $name;
 }
@@ -171,25 +176,26 @@ Simply add the trait `SoftDeletes`, make sure the database table has the `delete
 ```php
 <?php
 
+use Doctrine\ORM\Mapping AS ORM;
 use Mitch\LaravelDoctrine\Traits\SoftDeletes;
 
 /**
- * @Entity
- * @Table(name="users")
+ * @ORM\Entity
+ * @ORM\Table(name="users")
  */
 class User
 {
     use SoftDeletes;
 
     /**
-     * @Id
-     * @GeneratedValue
-     * @Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
-     * @Column(type="string")
+     * @ORM\Column(type="string")
      */
     private $name;
 }
@@ -212,26 +218,27 @@ To simplify this I've created the `Authentication` trait that you can easily inc
 ```php
 <?php
 
+use Doctrine\ORM\Mapping AS ORM;
 use Illuminate\Auth\UserInterface;
 use Mitch\LaravelDoctrine\Traits\Authentication;
 
 /**
- * @Entity
- * @Table(name="users")
+ * @ORM\Entity
+ * @ORM\Table(name="users")
  */
 class User implements UserInterface
 {
     use Authentication;
 
     /**
-     * @Id
-     * @GeneratedValue
-     * @Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
-     * @Column(type="string")
+     * @ORM\Column(type="string")
      */
     private $email;
 
@@ -247,31 +254,32 @@ Included is a `RememberToken` trait which does just that.
 ```php
 <?php
 
+use Doctrine\ORM\Mapping AS ORM;
 use Illuminate\Auth\UserInterface;
 use Mitch\LaravelDoctrine\Traits\RememberToken;
 
 /**
- * @Entity
- * @Table(name="users")
+ * @ORM\Entity
+ * @ORM\Table(name="users")
 */
 class User implements UserInterface
 {
     use RememberToken;
 
     /**
-    * @Id
-    * @GeneratedValue
-    * @Column(type="integer")
+    * @ORM\Id
+    * @ORM\GeneratedValue
+    * @ORM\Column(type="integer")
     */
     private $id;
 
     /**
-    * @Column(type="string")
+    * @ORM\Column(type="string")
     */
     private $email;
 
     /**
-    * @Column(type="string")
+    * @ORM\Column(type="string")
     */
     private $password;
 
