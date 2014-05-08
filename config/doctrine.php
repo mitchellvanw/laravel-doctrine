@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'simple_annotations' => true,
+    'simple_annotations' => false,
 
     'metadata' => [
         base_path('app/models')
