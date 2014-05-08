@@ -261,26 +261,26 @@ use Mitch\LaravelDoctrine\Traits\RememberToken;
 /**
  * @ORM\Entity
  * @ORM\Table(name="users")
-*/
+ */
 class User implements UserInterface
 {
     use RememberToken;
 
     /**
-    * @ORM\Id
-    * @ORM\GeneratedValue
-    * @ORM\Column(type="integer")
-    */
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
     private $id;
 
     /**
-    * @ORM\Column(type="string")
-    */
+     * @ORM\Column(type="string")
+     */
     private $email;
 
     /**
-    * @ORM\Column(type="string")
-    */
+     * @ORM\Column(type="string")
+     */
     private $password;
 
   	public function getAuthIdentifier()
