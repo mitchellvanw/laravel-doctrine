@@ -1,23 +1,24 @@
 <?php namespace Mitch\LaravelDoctrine\Traits;
 
+use Doctrine\ORM\Mapping AS ORM;
 use DateTime;
 
 trait Timestamps
 {
     /**
-     * @Column(name="created_at", type="datetime", nullable=false)
+     * @ORM\Column(name="created_at", type="datetime", nullable=false)
      * @var \DateTime
      */
     private $createdAt;
 
     /**
-     * @Column(name="updated_at", type="datetime", nullable=false)
+     * @ORM\Column(name="updated_at", type="datetime", nullable=false)
      * @var \DateTime
      */
     private $updatedAt;
 
     /**
-     * @PrePersist
+     * @ORM\PrePersist
      */
     public function prePersist()
     {
@@ -26,7 +27,7 @@ trait Timestamps
     }
 
     /**
-     * @PreUpdate
+     * @ORM\PreUpdate
      */
     public function preUpdate()
     {

@@ -1,11 +1,12 @@
 <?php namespace Mitch\LaravelDoctrine\Traits;
 
+use Doctrine\ORM\Mapping AS ORM;
 use DateTime;
 
 trait SoftDeletes
 {
     /**
-     * @Column(name="deleted_at", type="datetime", nullable=true)
+     * @ORM\Column(name="deleted_at", type="datetime", nullable=true)
      * @var \DateTime
      */
     private $deletedAt;
@@ -22,6 +23,6 @@ trait SoftDeletes
 
     public function isDeleted()
     {
-        return $this->deletedAt > new DateTime;
+        return new DateTime > $this->deletedAt;
     }
 }

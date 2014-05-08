@@ -1,11 +1,13 @@
-<?php  namespace Mitch\LaravelDoctrine\Traits; 
+<?php namespace Mitch\LaravelDoctrine\Traits;
+
+use Doctrine\ORM\Mapping AS ORM;
 
 trait Authentication
 {
     use RememberToken;
 
     /**
-     * @Column(type="string")
+     * @ORM\Column(type="string")
      */
     private $password;
 
@@ -36,6 +38,6 @@ trait Authentication
      */
     public function getAuthPassword()
     {
-        $this->getPassword();
+        return $this->getPassword();
     }
 } 

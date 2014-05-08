@@ -66,19 +66,19 @@ The `User` used in the example above looks like this.
 /**
  * @Entity
  * @Table(name="users")
-*/
+ */
 class User
 {
     /**
      * @Id
      * @GeneratedValue
      * @Column(type="integer")
-    */
+     */
     private $id;
 
     /**
      * @Column(type="string")
-    */
+     */
     private $name;
 
     public function getId()
@@ -106,19 +106,19 @@ If you've only used Eloquent and its models this might look bloated or frighteni
 /**
  * @Entity
  * @Table(name="users")
-*/
+ */
 class User
 {
     /**
      * @Id
      * @GeneratedValue
      * @Column(type="integer")
-    */
+     */
     private $id;
 
     /**
      * @Column(type="string")
-    */
+     */
     private $name;
 }
 ```
@@ -144,7 +144,7 @@ use Mitch\LaravelDoctrine\Traits\Timestamps;
  * @Entity
  * @Table(name="users")
  * @HasLifecycleCallbacks()
-*/
+ */
 class User
 {
     use Timestamps;
@@ -153,12 +153,12 @@ class User
      * @Id
      * @GeneratedValue
      * @Column(type="integer")
-    */
+     */
     private $id;
 
     /**
      * @Column(type="string")
-    */
+     */
     private $name;
 }
 ```
@@ -176,22 +176,116 @@ use Mitch\LaravelDoctrine\Traits\SoftDeletes;
 /**
  * @Entity
  * @Table(name="users")
-*/
+ */
 class User
 {
-  use SoftDeletes;
+    use SoftDeletes;
 
-  /**
+    /**
+     * @Id
+     * @GeneratedValue
+     * @Column(type="integer")
+     */
+    private $id;
+
+    /**
+     * @Column(type="string")
+     */
+    private $name;
+}
+```
+
+### Authentication
+
+Security is an important thing in most applications and if you're using Laravel's Auth system and Doctrine 2, why not use the `Doctrine UserProvider` delivered with this package.
+Like with `Timestamps` and `Soft Deleting` this ends up to be very easy and works right out of the box.
+
+Change the `driver` value in the `app/config/auth.php` configuration to `doctrine`.
+
+```php
+'driver' => 'doctrine',
+```
+
+Laravel's User objects implement *have* to implement `Illuminate\Auth\UserInterface`, this interface demands getters and setters for a password and remember token.
+To simplify this I've created the `Authentication` trait that you can easily include in your user class and automagically comply to the `UserInterface`.
+
+```php
+<?php
+
+use Illuminate\Auth\UserInterface;
+use Mitch\LaravelDoctrine\Traits\Authentication;
+
+/**
+ * @Entity
+ * @Table(name="users")
+ */
+class User implements UserInterface
+{
+    use Authentication;
+
+    /**
+     * @Id
+     * @GeneratedValue
+     * @Column(type="integer")
+     */
+    private $id;
+
+    /**
+     * @Column(type="string")
+     */
+    private $email;
+
+    // Getters and setters for $id and $email here
+}
+```
+
+That's it! You're ready to authenticate users with joy!
+
+If you want to implement the `password`, `getAuthIdentifier()` and `getAuthPassword()` from the `UserInterface` yourself, but don't want to create the `remember token` methods, this is also possible.
+Included is a `RememberToken` trait which does just that.
+
+```php
+<?php
+
+use Illuminate\Auth\UserInterface;
+use Mitch\LaravelDoctrine\Traits\RememberToken;
+
+/**
+ * @Entity
+ * @Table(name="users")
+*/
+class User implements UserInterface
+{
+    use RememberToken;
+
+    /**
     * @Id
     * @GeneratedValue
     * @Column(type="integer")
-   */
-  private $id;
+    */
+    private $id;
 
-  /**
+    /**
     * @Column(type="string")
-   */
-  private $name;
+    */
+    private $email;
+
+    /**
+    * @Column(type="string")
+    */
+    private $password;
+
+  	public function getAuthIdentifier()
+  	{
+  	    return $this->getId();
+  	}
+
+  	public function getAuthPassword()
+  	{
+  	    return $this->getPassword();
+  	}
+
+    // Getters and setters for $id, $email and $password here
 }
 ```
 

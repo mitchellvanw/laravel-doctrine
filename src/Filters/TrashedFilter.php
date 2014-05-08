@@ -5,10 +5,10 @@ use Doctrine\ORM\Query\Filter\SQLFilter;
 
 class TrashedFilter extends SQLFilter
 {
-    public function addFilterConstraint(ClassMetadata $entity, $table)
+    public function addFilterConstraint(ClassMetadata $metadata, $table)
     {
-        if ($this->isSoftDeletable($entity->rootEntityName)) {
-            return "{$table}.deleted_at IS NULL || {$table}.deleted_at <= NOW()";
+        if ($this->isSoftDeletable($metadata->rootEntityName)) {
+            return "{$table}.deleted_at IS NULL || NOW() < {$table}.deleted_at";
         }
         return '';
     }

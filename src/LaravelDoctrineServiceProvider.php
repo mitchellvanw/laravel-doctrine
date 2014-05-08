@@ -10,25 +10,25 @@ use Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener;
 
 class LaravelDoctrineServiceProvider extends ServiceProvider
 {
-	/**
-	 * Indicates if loading of the provider is deferred.
-	 *
-	 * @var bool
-	 */
-	protected $defer = false;
+    /**
+     * Indicates if loading of the provider is deferred.
+     *
+     * @var bool
+     */
+    protected $defer = false;
 
     public function boot()
     {
         $this->package('mitch/laravel-doctrine', 'doctrine', __DIR__.'/..');
     }
 
-	/**
-	 * Register the service provider.
-	 *
-	 * @return void
-	 */
-	public function register()
-	{
+    /**
+     * Register the service provider.
+     *
+     * @return void
+     */
+    public function register()
+    {
         $this->registerCacheManager();
         $this->registerEntityManager();
         $this->registerClassMetadataFactory();
@@ -39,7 +39,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             'Mitch\LaravelDoctrine\Console\SchemaUpdateCommand',
             'Mitch\LaravelDoctrine\Console\SchemaDropCommand'
         ]);
-	}
+    }
 
     public function registerCacheManager()
     {
@@ -62,7 +62,8 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
                 $config['metadata'],
                 $app['config']['app.debug'],
                 $config['proxy']['directory'],
-                $app['Mitch\LaravelDoctrine\CacheManager']->getCache($config['cache_provider'])
+                $app['Mitch\LaravelDoctrine\CacheManager']->getCache($config['cache_provider']),
+                false
             );
             $metadata->addFilter('trashed', 'Mitch\LaravelDoctrine\Filters\TrashedFilter');
             $metadata->setAutoGenerateProxyClasses($config['proxy']['auto_generate']);

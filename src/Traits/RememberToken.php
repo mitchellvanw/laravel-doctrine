@@ -1,9 +1,11 @@
-<?php  namespace Mitch\LaravelDoctrine\Traits; 
+<?php namespace Mitch\LaravelDoctrine\Traits;
+
+use Doctrine\ORM\Mapping AS ORM;
 
 trait RememberToken
 {
     /**
-     * @Column(name="remember_token", type="string", nullable=true)
+     * @ORM\Column(name="remember_token", type="string", nullable=true)
      */
     private $rememberToken;
 
