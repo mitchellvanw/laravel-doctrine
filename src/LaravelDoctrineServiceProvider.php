@@ -91,7 +91,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 
     private function registerDoctrineUserProvider()
     {
-        $this->app['Illuminate\Auth\AuthManager']->extend('doctrine', function($app) {
+        $this->app['auth']->extend('doctrine', function($app) {
             return new DoctrineUserProvider(
                 $app['Illuminate\Hashing\HasherInterface'],
                 $app['Doctrine\ORM\EntityManager'],
