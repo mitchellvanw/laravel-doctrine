@@ -1,8 +1,9 @@
 <?php namespace Mitch\LaravelDoctrine;
 
 use Doctrine\ORM\Events;
-use Doctrine\ORM\EntityManager;
+use Illuminate\Auth\Guard;
 use Doctrine\ORM\Tools\Setup;
+use Doctrine\ORM\EntityManager;
 use Doctrine\Common\EventManager;
 use Illuminate\Support\ServiceProvider;
 use Mitch\LaravelDoctrine\CacheProviders;
@@ -20,6 +21,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->package('mitch/laravel-doctrine', 'doctrine', __DIR__.'/..');
+        $this->registerDoctrineUserProvider();
     }
 
     /**
@@ -32,7 +34,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         $this->registerCacheManager();
         $this->registerEntityManager();
         $this->registerClassMetadataFactory();
-        $this->registerDoctrineUserProvider();
+//        $this->registerDoctrineUserProvider();
 
         $this->commands([
             'Mitch\LaravelDoctrine\Console\SchemaCreateCommand',
@@ -92,11 +94,11 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     private function registerDoctrineUserProvider()
     {
         $this->app['auth']->extend('doctrine', function($app) {
-            return new DoctrineUserProvider(
+            new Guard(new DoctrineUserProvider(
                 $app['Illuminate\Hashing\HasherInterface'],
                 $app['Doctrine\ORM\EntityManager'],
                 $app['config']['auth.model']
-            );
+            ), $app['session']);
         });
     }
 
