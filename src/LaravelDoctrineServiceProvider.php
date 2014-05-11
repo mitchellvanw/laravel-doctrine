@@ -20,6 +20,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->package('mitch/laravel-doctrine', 'doctrine', __DIR__.'/..');
+        $this->extendAuthManager();
     }
 
     /**
@@ -32,7 +33,6 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         $this->registerCacheManager();
         $this->registerEntityManager();
         $this->registerClassMetadataFactory();
-        $this->registerDoctrineUserProvider();
 
         $this->commands([
             'Mitch\LaravelDoctrine\Console\SchemaCreateCommand',
@@ -89,9 +89,9 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         });
     }
 
-    private function registerDoctrineUserProvider()
+    private function extendAuthManager()
     {
-        $this->app['auth']->extend('doctrine', function($app) {
+        $this->app['Illuminate\Auth\AuthManager']->extend('doctrine', function($app) {
             return new DoctrineUserProvider(
                 $app['Illuminate\Hashing\HasherInterface'],
                 $app['Doctrine\ORM\EntityManager'],
@@ -108,6 +108,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     public function provides()
     {
         return [
+            'Mitch\LaravelDoctrine\CacheManager',
             'Doctrine\ORM\EntityManagerInterface',
             'Doctrine\ORM\EntityManager',
             'Doctrine\ORM\Mapping\ClassMetadataFactory',
