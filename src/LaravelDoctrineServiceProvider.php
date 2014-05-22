@@ -4,6 +4,7 @@ use Doctrine\ORM\Events;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\Common\EventManager;
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 use Mitch\LaravelDoctrine\CacheProviders;
 use Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener;
@@ -33,6 +34,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         $this->registerCacheManager();
         $this->registerEntityManager();
         $this->registerClassMetadataFactory();
+        $this->registerAlias();
 
         $this->commands([
             'Mitch\LaravelDoctrine\Console\GenerateProxiesCommand',
@@ -99,6 +101,17 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
                 $app['config']['auth.model']
             );
         });
+    }
+
+    /**
+     *  Register the alias on runtime
+     */
+    private function registerAlias()
+    {
+        AliasLoader::getInstance()->alias(
+            'EntityManager',
+            'Mitch\LaravelDoctrine\EntityManagerFacade'
+        );
     }
 
     /**
