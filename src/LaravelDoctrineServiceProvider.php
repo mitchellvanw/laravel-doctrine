@@ -133,6 +133,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             'user'     => $database['username'],
             'password' => $database['password'],
             'prefix'   => $database['prefix'],
+            'charset'  => $database['charset'],
         ];
     }
 }
