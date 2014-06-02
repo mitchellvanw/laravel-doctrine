@@ -152,6 +152,11 @@ The only thing that's actually important in this `entity` are the properties. Th
 With Doctrine 2 you can't interact with database by using the entity `User`. You'll have to use [Entity Manager](https://github.com/mitchellvanw/laravel-doctrine/wiki/Entity-Manager) and `repositories`.
 This does create less overhead since your entities aren't extending the whole Eloquent `model` class. Which can dramatically slow down your application a lot if you're working with thousands or millions of records.
 
+## Caveats
+
+At the moment Doctrine\ORM version 2.5 is still in beta. As a result the composer install may require you to change
+the `minimum-stability` in your `composer.json` to `dev`.
+
 ## License
 
 This package is licensed under the [MIT license](https://github.com/mitchellvanw/laravel-doctrine/blob/master/LICENSE).
