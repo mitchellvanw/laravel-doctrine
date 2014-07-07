@@ -119,15 +119,21 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     /**
      * Map Laravel's to Doctrine's database config
      *
-     * @param  $config
+     * @param $config
+     * @throws Exception
      * @return array
      */
     private function getDatabaseConfig($config)
     {
         $default = $config['database.default'];
         $database = $config["database.connections.{$default}"];
+
+        $driverMapping = ['mysql' => 'pdo_mysql', 'pgsql' => 'pdo_pgsql', 'sqlsrv' => 'sqlsrv', 'sqlite' => 'pdo_sqlite'];
+
+        if(!in_array($database['driver'], $driverMapping)) throw new Exception("Driver {$database['driver']} unsupported by package at this time");
+
         return [
-            'driver'   => 'pdo_mysql',
+            'driver'   => $driverMapping[$database['driver']],
             'host'     => $database['host'],
             'dbname'   => $database['database'],
             'user'     => $database['username'],
