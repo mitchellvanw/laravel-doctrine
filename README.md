@@ -1,8 +1,8 @@
 # Doctrine 2 for Laravel
 
-[![Latest Stable Version](https://poser.pugx.org/mitch/laravel-doctrine/version.png)](https://packagist.org/packages/mitch/laravel-doctrine)
-[![License](https://poser.pugx.org/mitch/laravel-doctrine/license.png)](https://packagist.org/packages/mitch/laravel-doctrine)
-[![Total Downloads](https://poser.pugx.org/mitch/laravel-doctrine/downloads.png)](https://packagist.org/packages/mitch/laravel-doctrine)
+[![Latest Stable Version](https://poser.pugx.org/mitchellvanw/laravel-doctrine/version.png)](https://packagist.org/packages/mitchellvanw/laravel-doctrine)
+[![License](https://poser.pugx.org/mitchellvanw/laravel-doctrine/license.png)](https://packagist.org/packages/mitchellvanw/laravel-doctrine)
+[![Total Downloads](https://poser.pugx.org/mitchellvanw/laravel-doctrine/downloads.png)](https://packagist.org/packages/mitchellvanw/laravel-doctrine)
 
 A Doctrine 2 implementation that melts with Laravel 4.
 
@@ -24,15 +24,20 @@ Begin reading [the full documentation](https://github.com/mitchellvanw/laravel-d
   3. [Metadata](https://github.com/mitchellvanw/laravel-doctrine/wiki/Metadata)
 5. [MIT License](https://github.com/mitchellvanw/laravel-doctrine/blob/master/LICENSE)
 
+## Caveats
+
+At the moment Doctrine\ORM version 2.5 is still in beta. As a result the composer install may require you to change
+the `minimum-stability` in your `composer.json` to `dev`.
+
 ## Installation
 
-Begin by installing the package through Composer. Edit your project's `composer.json` to require `mitch/laravel-doctrine`.
+Begin by installing the package through Composer. Edit your project's `composer.json` to require `mitchellvanw/laravel-doctrine`.
 
 > This package is still in it's early stages, but fully functional. Is it possible that the API might change slightly, no drastic changes.
 
 ```php
 "require": {
-    "mitch/laravel-doctrine": "0.*"
+    "mitchellvanw/laravel-doctrine": "0.*"
 }
 ```
 
@@ -57,7 +62,7 @@ After This you'll need to add the facade. Open your `app/config/app.php` configu
 It's recommended to publish the package configuration.
 
 ```php
-php artisan config:publish mitch/laravel-doctrine --path=vendor/mitch/laravel-doctrine/config
+php artisan config:publish mitchellvanw/laravel-doctrine --path=vendor/mitchellvanw/laravel-doctrine/config
 ```
 
 ## 2 Minutes
@@ -151,11 +156,6 @@ The only thing that's actually important in this `entity` are the properties. Th
 
 With Doctrine 2 you can't interact with database by using the entity `User`. You'll have to use [Entity Manager](https://github.com/mitchellvanw/laravel-doctrine/wiki/Entity-Manager) and `repositories`.
 This does create less overhead since your entities aren't extending the whole Eloquent `model` class. Which can dramatically slow down your application a lot if you're working with thousands or millions of records.
-
-## Caveats
-
-At the moment Doctrine\ORM version 2.5 is still in beta. As a result the composer install may require you to change
-the `minimum-stability` in your `composer.json` to `dev`.
 
 ## License
 
