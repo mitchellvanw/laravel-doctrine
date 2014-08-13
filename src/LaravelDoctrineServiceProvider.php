@@ -125,15 +125,55 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     private function getDatabaseConfig($config)
     {
         $default = $config['database.default'];
-        $database = $config["database.connections.{$default}"];
+        $defaultConfig = $config["database.connections.{$default}"];
+
+        if (!isset($defaultConfig['read'])) {
+            return $this->translateConfigToDoctrine($defaultConfig);
+        }
+
+        $writeConfig = array_except(array_merge($defaultConfig, $defaultConfig['write']), ['read', 'write']);
+        $readConfig = array_except(array_merge($defaultConfig, $defaultConfig['read']), ['read', 'write', 'driver']);
+
+        $master = $this->translateConfigToDoctrine($writeConfig);
+        $slave = $this->translateConfigToDoctrine($readConfig);
+        $driver = array_pull($master, 'driver');
+
         return [
-            'driver'   => 'pdo_mysql',
-            'host'     => $database['host'],
-            'dbname'   => $database['database'],
-            'user'     => $database['username'],
-            'password' => $database['password'],
-            'prefix'   => $database['prefix'],
-            'charset'  => $database['charset'],
+            'wrapperClass'  => 'Doctrine\DBAL\Connections\MasterSlaveConnection',
+            'driver'        => $driver,
+            'master'        => $master,
+            'slaves'        => [$slave]
         ];
+    }
+
+    /**
+    * Translate db keys/values of Laravel's to Doctrine's database config
+    *
+    * @param  $config
+    * @return array
+    */
+    private function translateConfigToDoctrine($config)
+    {
+        // Doctrine uses some different config keys
+        $keyMappings = ['database' => 'dbname', 'username' => 'user'];
+
+        // SQLite is the only db that uses 'path' instead of 'dbname'
+        if (isset($config['driver']) && $config['driver'] == 'sqlite') {
+            $keyMappings = ['database' => 'path'];
+        }
+
+        foreach ($keyMappings as $laravelKey => $doctrineKey) {
+            if (array_key_exists($laravelKey, $config)) {
+                $config[$doctrineKey] = $config[$laravelKey];
+                unset($config[$laravelKey]);
+            }
+        }
+
+        // Doctrine drivers start with 'pdo_'
+        if (isset($config['driver'])) {
+            $config['driver'] = 'pdo_' . $config['driver'];
+        }
+
+        return $config;
     }
 }
