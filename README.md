@@ -62,7 +62,7 @@ After This you'll need to add the facade. Open your `app/config/app.php` configu
 It's recommended to publish the package configuration.
 
 ```php
-php artisan config:publish mitchellvanw/laravel-doctrine --path=vendor/mitchellvanw/laravel-doctrine/config
+php artisan config:publish mitch/laravel-doctrine --path=vendor/mitch/laravel-doctrine/config
 ```
 
 ## 2 Minutes
