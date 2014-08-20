@@ -70,7 +70,7 @@ class SchemaUpdateCommand extends Command
     protected function getOptions()
     {
         return [
-            ['sql', null, InputOption::VALUE_OPTIONAL, 'Dumps SQL query and does not execute update.'],
+            ['sql', false, InputOption::VALUE_NONE, 'Dumps SQL query and does not execute update.'],
             ['clean', null, InputOption::VALUE_OPTIONAL, 'When using clean model all non-relevant to this metadata assets will be cleared.']
         ];
     }

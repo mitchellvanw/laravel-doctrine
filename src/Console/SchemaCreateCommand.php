@@ -64,7 +64,7 @@ class SchemaCreateCommand extends Command
     protected function getOptions()
     {
         return [
-            ['sql', null, InputOption::VALUE_OPTIONAL, 'Dumps SQL query and does not execute creation.']
+            ['sql', false, InputOption::VALUE_NONE, 'Dumps SQL query and does not execute creation.']
         ];
     }
 } 
