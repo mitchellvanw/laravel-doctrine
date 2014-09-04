@@ -130,7 +130,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 
         $driverMapping = ['mysql' => 'pdo_mysql', 'pgsql' => 'pdo_pgsql', 'sqlsrv' => 'sqlsrv', 'sqlite' => 'pdo_sqlite'];
 
-        if(!in_array($database['driver'], $driverMapping)) throw new Exception("Driver {$database['driver']} unsupported by package at this time");
+        if(!in_array($database['driver'], $driverMapping)) throw new \Exception("Driver {$database['driver']} unsupported by package at this time");
 
         return [
             'driver'   => $driverMapping[$database['driver']],
