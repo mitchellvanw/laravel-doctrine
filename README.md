@@ -37,7 +37,7 @@ Begin by installing the package through Composer. Edit your project's `composer.
 
 ```php
 "require": {
-    "mitchellvanw/laravel-doctrine": "0.*"
+    "mitchellvanw/laravel-doctrine": "0.4.*"
 }
 ```
 
