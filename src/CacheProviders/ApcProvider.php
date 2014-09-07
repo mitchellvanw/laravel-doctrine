@@ -6,9 +6,9 @@ class ApcProvider implements Provider
 {
     public function make($config = null)
     {
-        if ( ! extension_loaded('apc')) {
+        if ( ! extension_loaded('apc'))
             throw new \RuntimeException('Apc extension was not loaded.');
-        }
+
         return new ApcCache;
     }
 

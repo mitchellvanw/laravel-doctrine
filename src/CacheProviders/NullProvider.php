@@ -9,6 +9,6 @@ class NullProvider implements Provider
 
     public function isAppropriate($provider)
     {
-        return $provider == null || $provider == 'null';
+        return $provider == null || $provider == 'null' || $provider == 'NULL';
     }
 }

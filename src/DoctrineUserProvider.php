@@ -1,6 +1,7 @@
 <?php namespace Mitch\LaravelDoctrine;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\UserProviderInterface;
 use Illuminate\Hashing\HasherInterface;
@@ -8,11 +9,11 @@ use Illuminate\Hashing\HasherInterface;
 class DoctrineUserProvider implements UserProviderInterface
 {
     /**
-     * @var \Illuminate\Hashing\HasherInterface
+     * @var HasherInterface
      */
     private $hasher;
     /**
-     * @var \Doctrine\ORM\EntityManager
+     * @var EntityManager
      */
     private $entityManager;
     /**
@@ -27,16 +28,15 @@ class DoctrineUserProvider implements UserProviderInterface
      */
     public function __construct(HasherInterface $hasher, EntityManager $entityManager, $entity)
     {
-
         $this->hasher = $hasher;
         $this->entityManager = $entityManager;
         $this->entity = $entity;
     }
     /**
      * Retrieve a user by their unique identifier.
-     *
+
      * @param  mixed $identifier
-     * @return \Illuminate\Auth\UserInterface|null
+     * @return UserInterface|null
      */
     public function retrieveById($identifier)
     {
@@ -45,10 +45,10 @@ class DoctrineUserProvider implements UserProviderInterface
 
     /**
      * Retrieve a user by by their unique identifier and "remember me" token.
-     *
+
      * @param  mixed $identifier
      * @param  string $token
-     * @return \Illuminate\Auth\UserInterface|null
+     * @return UserInterface|null
      */
     public function retrieveByToken($identifier, $token)
     {
@@ -61,8 +61,8 @@ class DoctrineUserProvider implements UserProviderInterface
 
     /**
      * Update the "remember me" token for the given user in storage.
-     *
-     * @param  \Illuminate\Auth\UserInterface $user
+
+     * @param  UserInterface $user
      * @param  string $token
      * @return void
      */
@@ -75,25 +75,24 @@ class DoctrineUserProvider implements UserProviderInterface
 
     /**
      * Retrieve a user by the given credentials.
-     *
+
      * @param  array $credentials
-     * @return \Illuminate\Auth\UserInterface|null
+     * @return UserInterface|null
      */
     public function retrieveByCredentials(array $credentials)
     {
         $criteria = [];
-        foreach ($credentials as $key => $value) {
-            if ( ! str_contains($key, 'password')) {
+        foreach ($credentials as $key => $value)
+            if ( ! str_contains($key, 'password'))
                 $criteria[$key] = $value;
-            }
-        }
+
         return $this->getRepository()->findOneBy($criteria);
     }
 
     /**
      * Validate a user against the given credentials.
-     *
-     * @param  \Illuminate\Auth\UserInterface $user
+
+     * @param  UserInterface $user
      * @param  array $credentials
      * @return bool
      */
@@ -105,7 +104,7 @@ class DoctrineUserProvider implements UserProviderInterface
     /**
      * Returns repository for the entity.
      *
-     * @return \Doctrine\ORM\EntityRepository
+     * @return EntityRepository
      */
     private function getRepository()
     {

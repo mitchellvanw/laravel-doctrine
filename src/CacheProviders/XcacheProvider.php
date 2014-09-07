@@ -6,9 +6,9 @@ class XcacheProvider implements Provider
 {
     public function make($config = null)
     {
-        if ( ! extension_loaded('xcache')) {
+        if ( ! extension_loaded('xcache'))
             throw new \RuntimeException('Xcache extension was not loaded.');
-        }
+
         return new XcacheCache;
     }
 

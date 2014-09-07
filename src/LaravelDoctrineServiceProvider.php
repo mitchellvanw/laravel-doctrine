@@ -19,7 +19,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->package('mitch/laravel-doctrine', 'doctrine', __DIR__.'/..');
+        $this->package('mitchellvanw/laravel-doctrine', 'doctrine', __DIR__.'/..');
         $this->extendAuthManager();
     }
 
