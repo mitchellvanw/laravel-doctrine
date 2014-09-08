@@ -9,5 +9,8 @@ class EntityManagerFacade extends Facade
      *
      * @return string
      */
-    protected static function getFacadeAccessor() { return 'Doctrine\ORM\EntityManager'; }
+    protected static function getFacadeAccessor()
+    {
+        return 'Doctrine\ORM\EntityManager';
+    }
 } 

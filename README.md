@@ -37,7 +37,7 @@ Begin by installing the package through Composer. Edit your project's `composer.
 
 ```php
 "require": {
-    "mitchellvanw/laravel-doctrine": "0.*"
+    "mitchellvanw/laravel-doctrine": "0.4.*"
 }
 ```
 
@@ -70,8 +70,6 @@ php artisan config:publish mitchellvanw/laravel-doctrine --path=vendor/mitchellv
 This package uses the Laravel database configuration and thus it works right out of the box. With the [Entity Manager](https://github.com/mitchellvanw/laravel-doctrine/wiki/Entity-Manager) facade (or service locator) you can interact with repositories.
 It might be wise to [check out the Doctrine 2 docs](http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/index.html) to know how it works.
 The little example below shows how to use the EntityManager in it simplest form.
-
-> This package currently only supports MySQL. Other drivers will be added soon.
 
 ```php
 <?php

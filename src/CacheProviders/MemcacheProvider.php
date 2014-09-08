@@ -7,9 +7,9 @@ class MemcacheProvider implements Provider
 {
     public function make($config = null)
     {
-        if ( ! extension_loaded('memcache')) {
+        if ( ! extension_loaded('memcache'))
             throw new \RuntimeException('Memcache extension was not loaded.');
-        }
+
         $memcache = new Memcache;
         $memcache->connect($config['host'], $config['port']);
 

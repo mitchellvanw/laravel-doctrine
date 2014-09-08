@@ -13,11 +13,10 @@ class CacheManager
 
     public function getCache($type)
     {
-        foreach ($this->providers as $provider) {
-            if ($provider->isAppropriate($type)) {
+        foreach ($this->providers as $provider)
+            if ($provider->isAppropriate($type))
                 return $provider->make($this->getConfig($type));
-            }
-        }
+
         return null;
     }
 

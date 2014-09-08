@@ -1,4 +1,4 @@
-<?php  namespace Mitch\LaravelDoctrine\EventListeners;
+<?php namespace Mitch\LaravelDoctrine\EventListeners;
 
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use DateTime;

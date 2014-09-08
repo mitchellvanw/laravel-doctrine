@@ -19,7 +19,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->package('mitch/laravel-doctrine', 'doctrine', __DIR__.'/..');
+        $this->package('mitchellvanw/laravel-doctrine', 'doctrine', __DIR__.'/..');
         $this->extendAuthManager();
     }
 
@@ -119,7 +119,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     /**
      * Map Laravel's to Doctrine's database config
      *
-     * @param  $config
+     * @param $config
      * @return array
      */
     private function getDatabaseConfig($config)
@@ -132,33 +132,47 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         }
 
         $writeConfig = array_except(array_merge($defaultConfig, $defaultConfig['write']), ['read', 'write']);
-        $readConfig = array_except(array_merge($defaultConfig, $defaultConfig['read']), ['read', 'write', 'driver']);
+        $readConfig = array_except(array_merge($defaultConfig, $defaultConfig['read']), ['read', 'write']);
 
         $master = $this->translateConfigToDoctrine($writeConfig);
         $slave = $this->translateConfigToDoctrine($readConfig);
-        $driver = array_pull($master, 'driver');
 
         return [
             'wrapperClass'  => 'Doctrine\DBAL\Connections\MasterSlaveConnection',
-            'driver'        => $driver,
+            'driver'        => array_pull($master, 'driver'),
             'master'        => $master,
             'slaves'        => [$slave]
         ];
     }
 
     /**
-    * Translate db keys/values of Laravel's to Doctrine's database config
-    *
-    * @param  $config
-    * @return array
-    */
+     * Translate db keys/values of Laravel's to Doctrine's database config
+     *
+     * @param  $config
+     * @throws Exception
+     * @return array
+     */
     private function translateConfigToDoctrine($config)
     {
+        // Mapping Laravel driver names to Doctrine driver names
+        $driverMapping = [
+            'mysql' => 'pdo_mysql',
+            'pgsql' => 'pdo_pgsql',
+            'sqlsrv' => 'sqlsrv',
+            'sqlite' => 'pdo_sqlite'
+        ];
+
+        if (!array_key_exists($config['driver'], $driverMapping)) {
+            throw new \Exception("Driver {$config['driver']} unsupported by package at this time");
+        }
+
+        $config['driver'] = $driverMapping[$config['driver']];
+
         // Doctrine uses some different config keys
         $keyMappings = ['database' => 'dbname', 'username' => 'user'];
 
         // SQLite is the only db that uses 'path' instead of 'dbname'
-        if (isset($config['driver']) && $config['driver'] == 'sqlite') {
+        if ($config['driver'] == 'pdo_sqlite') {
             $keyMappings = ['database' => 'path'];
         }
 
@@ -167,11 +181,6 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
                 $config[$doctrineKey] = $config[$laravelKey];
                 unset($config[$laravelKey]);
             }
-        }
-
-        // Doctrine drivers start with 'pdo_'
-        if (isset($config['driver'])) {
-            $config['driver'] = 'pdo_' . $config['driver'];
         }
 
         return $config;
