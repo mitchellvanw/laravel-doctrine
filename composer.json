@@ -16,9 +16,14 @@
         "doctrine/orm": "2.5.*",
         "doctrine/migrations": "1.*"
     },
+	"require-dev": {
+		"mockery/mockery": "dev-master",
+		"phpunit/phpunit": "3.7.*"
+	},
     "autoload": {
         "psr-4": {
-            "Mitch\\LaravelDoctrine\\": "src/"
+            "Mitch\\LaravelDoctrine\\": "src/",
+	        "Tests\\": "tests/"
         }
     },
     "minimum-stability": "dev"
