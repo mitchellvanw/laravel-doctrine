@@ -1,4 +1,4 @@
-<?php namespace Tests;
+<?php namespace Tests\Configuration;
 
 use Mitch\LaravelDoctrine\Configuration\DriverMapper;
 use Mockery as m;
