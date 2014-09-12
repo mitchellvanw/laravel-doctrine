@@ -1,7 +1,9 @@
 <?php namespace Tests\Configuration;
 
+use Illuminate\Support\Facades\Facade;
 use Mitch\LaravelDoctrine\Configuration\SqliteConfigurationMapper;
 use Mockery as m;
+use Tests\Stubs\ApplicationStub;
 
 class SqliteConfigurationMapperTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,22 +22,20 @@ class SqliteConfigurationMapperTest extends \PHPUnit_Framework_TestCase
 	
 	public function testMapping()
 	{
-		require(__DIR__.'/../Stubs/AppPath.php');
+		Facade::setFacadeApplication(new ApplicationStub);
 
 		$configuration = [
 			'driver'   => 'sqlite',
 			'database' => 'db',
 			'username' => 'somedude',
-			'password' => 'not safe',
 			'prefix'   => 'mitch_',
 			'charset'  => 'whatevs'
 		];
 
 		$expected = [
 			'driver'   => 'pdo_sqlite',
-			'path'     => $configuration['database'],
-			'user'     => $configuration['username'],
-			'password' => $configuration['password']
+			'path'     => 'path/database/db.sqlite',
+			'user'     => $configuration['username']
 		];
 
 		$actual = $this->sqlMapper->map($configuration);
