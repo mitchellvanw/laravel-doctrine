@@ -12,8 +12,7 @@ class SqliteConfigurationMapper implements Mapper
 	{
 		$sqliteConfig = [
 			'driver'   => 'pdo_sqlite',
-			'user'     => $configuration['username'],
-			'password' => $configuration['password']
+			'user'     => @$configuration['username']
 		];
 
 		$this->databaseLocation($configuration, $sqliteConfig);
@@ -44,7 +43,7 @@ class SqliteConfigurationMapper implements Mapper
 			$sqliteConfig['memory'] = true;
 		}
 		else {
-			$sqliteConfig['path'] = app_path().'/database/'.$configuration['database'].'.sqlite';
+			$sqliteConfig['path'] = app_path('database').'/'.$configuration['database'].'.sqlite';
 		}
 	}
 } 
