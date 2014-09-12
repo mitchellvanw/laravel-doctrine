@@ -1,6 +1,6 @@
 <?php namespace Mitch\LaravelDoctrine\Configuration;
 
-class SqliteConfigurationMapper implements MappingInterface
+class SqliteConfigurationMapper implements Mapper
 {
 	/**
 	 * Map the L4 configuration array to a sqlite-friendly doctrine configuration.
@@ -19,6 +19,17 @@ class SqliteConfigurationMapper implements MappingInterface
 		$this->databaseLocation($configuration, $sqliteConfig);
 
 		return $sqliteConfig;
+	}
+
+	/**
+	 * Is only suitable for sqlite configuration mapping.
+	 *
+	 * @param array $configuration
+	 * @return bool
+	 */
+	public function appropriate(array $configuration)
+	{
+		return $configuration['driver'] == 'sqlite';
 	}
 
 	/**

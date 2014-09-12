@@ -1,6 +1,6 @@
 <?php namespace Mitch\LaravelDoctrine\Configuration;
 
-class SqlConfigurationMapper implements MappingInterface
+class SqlConfigurationMapper implements Mapper
 {
 	/**
 	 * Creates the configuration mapping for SQL database engines, including SQL server, MySQL and PostgreSQL.
@@ -19,5 +19,16 @@ class SqlConfigurationMapper implements MappingInterface
 			'prefix'   => $configuration['prefix'],
 			'charset'  => $configuration['charset']
 		];
+	}
+
+	/**
+	 * Is suitable for mapping configurations that use a mysql, postgres or sqlserv setup.
+	 *
+	 * @param array $configuration
+	 * @return boolean
+	 */
+	public function appropriate(array $configuration)
+	{
+		return in_array($configuration['driver'], ['sqlsrv', 'mysql', 'postgresql']);
 	}
 }

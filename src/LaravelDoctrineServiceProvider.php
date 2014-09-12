@@ -6,7 +6,9 @@ use Doctrine\ORM\Tools\Setup;
 use Doctrine\Common\EventManager;
 use Illuminate\Support\ServiceProvider;
 use Mitch\LaravelDoctrine\CacheProviders;
-use Mitch\LaravelDoctrine\Configuration\DriverMapperFactory;
+use Mitch\LaravelDoctrine\Configuration\DriverMapper;
+use Mitch\LaravelDoctrine\Configuration\SqlConfigurationMapper;
+use Mitch\LaravelDoctrine\Configuration\SqliteConfigurationMapper;
 use Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener;
 
 class LaravelDoctrineServiceProvider extends ServiceProvider
@@ -133,7 +135,10 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         $default = $config['database.default'];
 	    $databaseConfiguration = $config["database.connections.{$default}"];
 
-        $driverMapper = new DriverMapperFactory($databaseConfiguration['driver']);
+        $driverMapper = new DriverMapper($databaseConfiguration['driver']);
+
+	    $driverMapper->registerMapper(new SqlConfigurationMapper);
+	    $driverMapper->registerMapper(new SqliteConfigurationMapper);
 
 	    return $driverMapper->map($databaseConfiguration);
     }
