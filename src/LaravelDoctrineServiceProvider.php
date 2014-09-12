@@ -6,6 +6,7 @@ use Doctrine\ORM\Tools\Setup;
 use Doctrine\Common\EventManager;
 use Illuminate\Support\ServiceProvider;
 use Mitch\LaravelDoctrine\CacheProviders;
+use Mitch\LaravelDoctrine\Configuration\DriverMapperFactory;
 use Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener;
 
 class LaravelDoctrineServiceProvider extends ServiceProvider
@@ -59,6 +60,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     {
         $this->app->singleton('Doctrine\ORM\EntityManager', function($app) {
             $config = $app['config']['doctrine::doctrine'];
+
             $metadata = Setup::createAnnotationMetadataConfiguration(
                 $config['metadata'],
                 $app['config']['app.debug'],
@@ -66,6 +68,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
                 $app['Mitch\LaravelDoctrine\CacheManager']->getCache($config['cache_provider']),
                 $config['simple_annotations']
             );
+
             $metadata->addFilter('trashed', 'Mitch\LaravelDoctrine\Filters\TrashedFilter');
             $metadata->setAutoGenerateProxyClasses($config['proxy']['auto_generate']);
             $metadata->setDefaultRepositoryClassName($config['repository']);
@@ -74,10 +77,12 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             if (isset($config['proxy']['namespace'])) {
                 $metadata->setProxyNamespace($config['proxy']['namespace']);
             }
+
             $eventManager = new EventManager;
             $eventManager->addEventListener(Events::onFlush, new SoftDeletableListener);
             $entityManager = EntityManager::create($this->getDatabaseConfig($app['config']), $metadata, $eventManager);
             $entityManager->getFilters()->enable('trashed');
+
             return $entityManager;
         });
         $this->app->singleton('Doctrine\ORM\EntityManagerInterface', 'Doctrine\ORM\EntityManager');
@@ -117,29 +122,19 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     }
 
     /**
-     * Map Laravel's to Doctrine's database config
+     * Map Laravel's to Doctrine's database configuration requirements.
      *
      * @param $config
-     * @throws Exception
+     * @throws \Exception
      * @return array
      */
     private function getDatabaseConfig($config)
     {
         $default = $config['database.default'];
-        $database = $config["database.connections.{$default}"];
+	    $databaseConfiguration = $config["database.connections.{$default}"];
 
-        $driverMapping = ['mysql' => 'pdo_mysql', 'pgsql' => 'pdo_pgsql', 'sqlsrv' => 'sqlsrv', 'sqlite' => 'pdo_sqlite'];
+        $driverMapper = new DriverMapperFactory($databaseConfiguration['driver']);
 
-        if(!array_key_exists($database['driver'], $driverMapping)) throw new \Exception("Driver {$database['driver']} unsupported by package at this time");
-
-        return [
-            'driver'   => $driverMapping[$database['driver']],
-            'host'     => $database['host'],
-            'dbname'   => $database['database'],
-            'user'     => $database['username'],
-            'password' => $database['password'],
-            'prefix'   => $database['prefix'],
-            'charset'  => $database['charset'],
-        ];
+	    return $driverMapper->map($databaseConfiguration);
     }
 }
