@@ -11,12 +11,11 @@ class SqlConfigurationMapper implements Mapper
 	public function map(array $configuration)
 	{
 		return [
-			'driver'   => $configuration['driver'],
+			'driver'   => $this->driver($configuration['driver']),
 			'host'     => $configuration['host'],
 			'dbname'   => $configuration['database'],
 			'user'     => $configuration['username'],
 			'password' => $configuration['password'],
-			'prefix'   => $configuration['prefix'],
 			'charset'  => $configuration['charset']
 		];
 	}
@@ -29,6 +28,19 @@ class SqlConfigurationMapper implements Mapper
 	 */
 	public function appropriate(array $configuration)
 	{
-		return in_array($configuration['driver'], ['sqlsrv', 'mysql', 'postgresql']);
+		return in_array($configuration['driver'], ['sqlsrv', 'mysql', 'pgsql']);
+	}
+
+	/**
+	 * Maps the Laravel driver syntax to an Sql doctrine format.
+	 *
+	 * @param $l4Driver
+	 * @return string
+	 */
+	public function driver($l4Driver)
+	{
+		$doctrineDrivers = ['mysql' => 'pdo_mysql', 'sqlsrv' => 'pdo_sqlsrv', 'pgsql' => 'pdo_pgsql'];
+
+		return $doctrineDrivers[$l4Driver];
 	}
 }
