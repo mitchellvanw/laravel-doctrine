@@ -16,5 +16,5 @@ interface Mapper
 	 * @param array $configuration
 	 * @return mixed
 	 */
-	public function appropriate(array $configuration);
+	public function isAppropriate(array $configuration);
 }

@@ -16,8 +16,8 @@ class SqliteConfigurationMapperTest extends \PHPUnit_Framework_TestCase
 
 	public function testAppropriation()
 	{
-		$this->assertTrue($this->sqlMapper->appropriate(['driver' => 'sqlite']));
-		$this->assertFalse($this->sqlMapper->appropriate(['driver' => 'sqlsdfite']));
+		$this->assertTrue($this->sqlMapper->isAppropriate(['driver' => 'sqlite']));
+		$this->assertFalse($this->sqlMapper->isAppropriate(['driver' => 'sqlsdfite']));
 	}
 	
 	public function testMapping()

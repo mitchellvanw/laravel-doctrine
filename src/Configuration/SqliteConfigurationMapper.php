@@ -26,7 +26,7 @@ class SqliteConfigurationMapper implements Mapper
 	 * @param array $configuration
 	 * @return bool
 	 */
-	public function appropriate(array $configuration)
+	public function isAppropriate(array $configuration)
 	{
 		return $configuration['driver'] == 'sqlite';
 	}

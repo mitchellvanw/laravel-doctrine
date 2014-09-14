@@ -26,7 +26,7 @@ class SqlConfigurationMapper implements Mapper
 	 * @param array $configuration
 	 * @return boolean
 	 */
-	public function appropriate(array $configuration)
+	public function isAppropriate(array $configuration)
 	{
 		return in_array($configuration['driver'], ['sqlsrv', 'mysql', 'pgsql']);
 	}
