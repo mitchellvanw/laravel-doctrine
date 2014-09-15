@@ -71,8 +71,10 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             $metadata->setDefaultRepositoryClassName($config['repository']);
             $metadata->setSQLLogger($config['logger']);
 
-            if ($config['repositoryFactory']) {
-                $metadata->setRepositoryFactory($config['repositoryFactory']);
+            if (isset($config['repositoryFactory'])) {
+                $metadata->setRepositoryFactory(
+                    $this->app->make($config['repositoryFactory'])
+                );
             }
 
             if (isset($config['proxy']['namespace'])) {
