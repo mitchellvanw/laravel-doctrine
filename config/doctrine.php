@@ -30,5 +30,7 @@ return [
 
     'repository' => 'Doctrine\ORM\EntityRepository',
 
+    'repositoryFactory' => null,
+
     'logger' => null
 ];
