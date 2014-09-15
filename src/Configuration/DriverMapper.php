@@ -3,29 +3,12 @@
 class DriverMapper
 {
 	/**
-	 * The driver of the database type to be used for the mapping and instantiation.
-	 *
-	 * @var string
-	 */
-	private $driver;
-
-	/**
 	 * An array of mappers that can be cycled through to determine which mapper
 	 * is appropriate for a given configuration arrangement.
 	 *
 	 * @var array
 	 */
 	private $configurationMappers = [];
-
-	/**
-	 * Construct the driver, store locally.
-	 *
-	 * @param $driver
-	 */
-	public function __construct($driver)
-	{
-		$this->driver = $driver;
-	}
 
 	/**
 	 * Register a new driver configuration mapper.
