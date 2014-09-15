@@ -8,7 +8,7 @@ class TrashedFilter extends SQLFilter
     public function addFilterConstraint(ClassMetadata $metadata, $table)
     {
         if ($this->isSoftDeletable($metadata->rootEntityName))
-            return "{$table}.deleted_at IS NULL || NOW() < {$table}.deleted_at";
+            return "{$table}.deleted_at IS NULL OR NOW() < {$table}.deleted_at";
 
         return '';
     }
