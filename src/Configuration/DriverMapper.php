@@ -47,7 +47,7 @@ class DriverMapper
 	public function map($configuration)
 	{
 		foreach ($this->configurationMappers as $mapper) {
-			if ($mapper->appropriate($configuration)) {
+			if ($mapper->isAppropriate($configuration)) {
 				return $mapper->map($configuration);
 			}
 		}
