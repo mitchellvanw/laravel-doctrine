@@ -36,6 +36,10 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 		$this->registerCacheManager();
 		$this->registerEntityManager();
 		$this->registerClassMetadataFactory();
+<<<<<<< Updated upstream
+=======
+		$this->registerConfigurationMapper();
+>>>>>>> Stashed changes
 
 		$this->commands([
 			'Mitch\LaravelDoctrine\Console\GenerateProxiesCommand',
@@ -45,6 +49,18 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 		]);
 	}
 
+<<<<<<< Updated upstream
+=======
+	/**
+	 * The driver mapper's instance needs to be accessible from anywhere in the application,
+	 * for registering new mapping configurations or other storage libraries.
+	 */
+	private function registerConfigurationMapper()
+	{
+		$this->app->singleton('Mitch\Laravel\Doctrine\Configuration\DriverMapper');
+	}
+
+>>>>>>> Stashed changes
 	public function registerCacheManager()
 	{
 		$this->app->bind('Mitch\LaravelDoctrine\CacheManager', function($app) {
@@ -133,9 +149,9 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 	private function getDatabaseConfig($config)
 	{
 		$default = $config['database.default'];
-		$databaseConfiguration = $config["database.connections.{$default}"];
+		$databaseConfiguration = $config["database.connections.$default"];
 
-		$driverMapper = new DriverMapper;
+		$driverMapper = App::make('Mitch\Laravel\Doctrine\Configuration\DriverMapper');
 
 		$driverMapper->registerMapper(new SqlConfigurationMapper);
 		$driverMapper->registerMapper(new SqliteConfigurationMapper);
