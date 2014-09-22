@@ -16,8 +16,8 @@ class SqliteMapperTest extends \PHPUnit_Framework_TestCase
 
 	public function testAppropriation()
 	{
-		$this->assertTrue($this->sqlMapper->isAppropriate(['driver' => 'sqlite']));
-		$this->assertFalse($this->sqlMapper->isAppropriate(['driver' => 'sqlsdfite']));
+		$this->assertTrue($this->sqlMapper->isAppropriateFor(['driver' => 'sqlite']));
+		$this->assertFalse($this->sqlMapper->isAppropriateFor(['driver' => 'sqlsdfite']));
 	}
 	
 	public function testMapping()
@@ -33,7 +33,8 @@ class SqliteMapperTest extends \PHPUnit_Framework_TestCase
 		$expected = [
 			'driver'   => 'pdo_sqlite',
 			'path'     => 'path/database/db.sqlite',
-			'user'     => $configuration['username']
+			'user'     => $configuration['username'],
+            'password' => null
 		];
 		$actual = $this->sqlMapper->map($configuration);
 		$this->assertEquals($expected, $actual);

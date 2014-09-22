@@ -14,9 +14,9 @@ class SqlMapperTest extends \PHPUnit_Framework_TestCase
 
 	public function testAppropriation()
 	{
-		$this->assertTrue($this->sqlMapper->isAppropriate(['driver' => 'mysql']));
-		$this->assertTrue($this->sqlMapper->isAppropriate(['driver' => 'pgsql']));
-		$this->assertTrue($this->sqlMapper->isAppropriate(['driver' => 'sqlsrv']));
+		$this->assertTrue($this->sqlMapper->isAppropriateFor(['driver' => 'mysql']));
+		$this->assertTrue($this->sqlMapper->isAppropriateFor(['driver' => 'pgsql']));
+		$this->assertTrue($this->sqlMapper->isAppropriateFor(['driver' => 'sqlsrv']));
 	}
 
 	public function testMapping()
