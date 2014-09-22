@@ -1,15 +1,15 @@
 <?php namespace Tests\Configuration;
 
-use Mitch\LaravelDoctrine\Configuration\SqlConfigurationMapper;
+use Mitch\LaravelDoctrine\Configuration\SqlMapper;
 use Mockery as m;
 
-class SqlConfigurationMapperTest extends \PHPUnit_Framework_TestCase
+class SqlMapperTest extends \PHPUnit_Framework_TestCase
 {
 	private $sqlMapper;
 
 	public function setUp()
 	{
-		$this->sqlMapper = new SqlConfigurationMapper;
+		$this->sqlMapper = new SqlMapper;
 	}
 
 	public function testAppropriation()
@@ -30,7 +30,6 @@ class SqlConfigurationMapperTest extends \PHPUnit_Framework_TestCase
 			'prefix'   => 'mitch_',
 			'charset'  => 'whatevs'
 		];
-
 		$expected = [
 			'driver'   => 'pdo_mysql',
 			'host'     => $configuration['host'],
@@ -39,9 +38,7 @@ class SqlConfigurationMapperTest extends \PHPUnit_Framework_TestCase
 			'password' => $configuration['password'],
 			'charset'  => $configuration['charset']
 		];
-
 		$actual = $this->sqlMapper->map($configuration);
-
 		$this->assertEquals($expected, $actual);
 	}
 }

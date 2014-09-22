@@ -1,4 +1,4 @@
-<?php namespace Mitch\LaravelDoctrine\CacheProviders;
+<?php namespace Mitch\LaravelDoctrine\Cache;
 
 class NullProvider implements Provider
 {

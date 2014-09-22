@@ -1,17 +1,17 @@
 <?php namespace Tests\Configuration;
 
 use Illuminate\Support\Facades\Facade;
-use Mitch\LaravelDoctrine\Configuration\SqliteConfigurationMapper;
+use Mitch\LaravelDoctrine\Configuration\SqliteMapper;
 use Mockery as m;
 use Tests\Stubs\ApplicationStub;
 
-class SqliteConfigurationMapperTest extends \PHPUnit_Framework_TestCase
+class SqliteMapperTest extends \PHPUnit_Framework_TestCase
 {
 	private $sqlMapper;
 
 	public function setUp()
 	{
-		$this->sqlMapper = new SqliteConfigurationMapper;
+		$this->sqlMapper = new SqliteMapper;
 	}
 
 	public function testAppropriation()
@@ -23,7 +23,6 @@ class SqliteConfigurationMapperTest extends \PHPUnit_Framework_TestCase
 	public function testMapping()
 	{
 		Facade::setFacadeApplication(new ApplicationStub);
-
 		$configuration = [
 			'driver'   => 'sqlite',
 			'database' => 'db',
@@ -31,15 +30,12 @@ class SqliteConfigurationMapperTest extends \PHPUnit_Framework_TestCase
 			'prefix'   => 'mitch_',
 			'charset'  => 'whatevs'
 		];
-
 		$expected = [
 			'driver'   => 'pdo_sqlite',
 			'path'     => 'path/database/db.sqlite',
 			'user'     => $configuration['username']
 		];
-
 		$actual = $this->sqlMapper->map($configuration);
-
 		$this->assertEquals($expected, $actual);
 	}
 }

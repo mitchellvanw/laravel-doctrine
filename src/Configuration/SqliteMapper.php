@@ -1,6 +1,6 @@
 <?php namespace Mitch\LaravelDoctrine\Configuration;
 
-class SqliteConfigurationMapper implements Mapper
+class SqliteMapper implements Mapper
 {
 	/**
 	 * Map the L4 configuration array to a sqlite-friendly doctrine configuration.
@@ -11,13 +11,11 @@ class SqliteConfigurationMapper implements Mapper
 	public function map(array $configuration)
 	{
 		$sqliteConfig = [
-			'driver'   => 'pdo_sqlite',
-			'user'     => @$configuration['username'],
+			'driver' => 'pdo_sqlite',
+			'user' => @$configuration['username'],
 			'password' => @$configuration['password']
 		];
-
 		$this->databaseLocation($configuration, $sqliteConfig);
-
 		return $sqliteConfig;
 	}
 
@@ -27,7 +25,7 @@ class SqliteConfigurationMapper implements Mapper
 	 * @param array $configuration
 	 * @return bool
 	 */
-	public function isAppropriate(array $configuration)
+	public function isAppropriateFor(array $configuration)
 	{
 		return $configuration['driver'] == 'sqlite';
 	}
@@ -40,11 +38,9 @@ class SqliteConfigurationMapper implements Mapper
 	 */
 	private function databaseLocation($configuration, &$sqliteConfig)
 	{
-		if ($configuration['database'] == ':memory:') {
+		if ($configuration['database'] == ':memory:')
 			$sqliteConfig['memory'] = true;
-		}
-		else {
+		else
 			$sqliteConfig['path'] = app_path('database').'/'.$configuration['database'].'.sqlite';
-		}
 	}
 } 
