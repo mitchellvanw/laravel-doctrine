@@ -40,6 +40,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         $this->registerCacheManager();
         $this->registerEntityManager();
         $this->registerClassMetadataFactory();
+        $this->registerValidationVerifier();
 
         $this->commands([
             'Mitch\LaravelDoctrine\Console\GenerateProxiesCommand',
@@ -60,6 +61,18 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             $mapper->registerMapper(new SqlMapper);
             $mapper->registerMapper(new SqliteMapper);
             return $mapper;
+        });
+    }
+
+    /**
+     * Registers a new presence verifier for Laravel 4 validation. Specifically, this
+     * is for the use of the Doctrine ORM.
+     */
+    public function registerValidationVerifier()
+    {
+        $this->app->bindShared('validation.presence', function()
+        {
+            return new DoctrinePresenceVerifier;
         });
     }
 
