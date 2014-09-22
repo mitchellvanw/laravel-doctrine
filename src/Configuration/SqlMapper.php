@@ -1,6 +1,6 @@
 <?php namespace Mitch\LaravelDoctrine\Configuration;
 
-class SqlConfigurationMapper implements Mapper
+class SqlMapper implements Mapper
 {
 	/**
 	 * Creates the configuration mapping for SQL database engines, including SQL server, MySQL and PostgreSQL.
@@ -11,12 +11,12 @@ class SqlConfigurationMapper implements Mapper
 	public function map(array $configuration)
 	{
 		return [
-			'driver'   => $this->driver($configuration['driver']),
-			'host'     => $configuration['host'],
-			'dbname'   => $configuration['database'],
-			'user'     => $configuration['username'],
+			'driver' => $this->driver($configuration['driver']),
+			'host' => $configuration['host'],
+			'dbname' => $configuration['database'],
+			'user' => $configuration['username'],
 			'password' => $configuration['password'],
-			'charset'  => $configuration['charset']
+			'charset' => $configuration['charset']
 		];
 	}
 
@@ -26,7 +26,7 @@ class SqlConfigurationMapper implements Mapper
 	 * @param array $configuration
 	 * @return boolean
 	 */
-	public function isAppropriate(array $configuration)
+	public function isAppropriateFor(array $configuration)
 	{
 		return in_array($configuration['driver'], ['sqlsrv', 'mysql', 'pgsql']);
 	}

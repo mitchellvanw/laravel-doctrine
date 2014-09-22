@@ -22,10 +22,9 @@ trait Timestamps
      */
     public function prePersist()
     {
-	    $date = new Datetime;
-
-        $this->setCreatedAt($date);
-        $this->setUpdatedAt($date);
+	    $now = new Datetime;
+        $this->createdAt = $now;
+        $this->updatedAt = $now;
     }
 
     /**

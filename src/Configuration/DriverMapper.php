@@ -1,5 +1,7 @@
 <?php namespace Mitch\LaravelDoctrine\Configuration;
 
+use Exception;
+
 class DriverMapper
 {
 	/**
@@ -8,7 +10,7 @@ class DriverMapper
 	 *
 	 * @var array
 	 */
-	private $configurationMappers = [];
+	private $mappers = [];
 
 	/**
 	 * Register a new driver configuration mapper.
@@ -17,7 +19,7 @@ class DriverMapper
 	 */
 	public function registerMapper(Mapper $mapper)
 	{
-		$this->configurationMappers[] = $mapper;
+		$this->mappers[] = $mapper;
 	}
 
 	/**
@@ -25,16 +27,14 @@ class DriverMapper
 	 *
 	 * @param $configuration
 	 * @return array
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function map($configuration)
 	{
-		foreach ($this->configurationMappers as $mapper) {
-			if ($mapper->isAppropriate($configuration)) {
+		foreach ($this->mappers as $mapper)
+			if ($mapper->isAppropriateFor($configuration))
 				return $mapper->map($configuration);
-			}
-		}
 
-		throw new \Exception("Driver {$configuration['driver']} unsupported by package at this time.");
+		throw new Exception("Driver {$configuration['driver']} unsupported by package at this time.");
 	}
 }

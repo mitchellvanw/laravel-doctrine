@@ -1,4 +1,4 @@
-<?php namespace Mitch\LaravelDoctrine\CacheProviders; 
+<?php namespace Mitch\LaravelDoctrine\Cache;
 
 use Doctrine\Common\Cache\XcacheCache;
 
