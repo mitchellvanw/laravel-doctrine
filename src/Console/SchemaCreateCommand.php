@@ -51,9 +51,9 @@ class SchemaCreateCommand extends Command
     public function fire()
     {
         if ($this->option('sql')) {
-            $this->info('Outputting create query:');
+            $this->info('Outputting create query:'.PHP_EOL);
             $sql = $this->tool->getCreateSchemaSql($this->metadata->getAllMetadata());
-            $this->info(implode(';' . PHP_EOL, $sql));
+            $this->info(implode(';'.PHP_EOL, $sql));
         } else {
             $this->info('Creating database schema...');
             $this->tool->createSchema($this->metadata->getAllMetadata());
