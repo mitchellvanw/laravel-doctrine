@@ -82,6 +82,6 @@ class DoctrinePresenceVerifier implements PresenceVerifierInterface
 	{
 		$rsm = new ResultSetMapping();
 
-		return EntityManager::createNativeQuery(implode(' ', $queryParts), $rsm);;
+		return EntityManager::createNativeQuery(implode(' ', $queryParts), $rsm);
 	}
 }
