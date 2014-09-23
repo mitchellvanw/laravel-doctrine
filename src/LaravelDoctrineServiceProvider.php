@@ -15,6 +15,7 @@ use Mitch\LaravelDoctrine\Configuration\SqlMapper;
 use Mitch\LaravelDoctrine\Configuration\SqliteMapper;
 use Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener;
 use Mitch\LaravelDoctrine\Filters\TrashedFilter;
+use Mitch\LaravelDoctrine\Validation\DoctrinePresenceVerifier;
 
 class LaravelDoctrineServiceProvider extends ServiceProvider
 {
