@@ -14,6 +14,7 @@ use Mitch\LaravelDoctrine\Configuration\DriverMapper;
 use Mitch\LaravelDoctrine\Configuration\SqlMapper;
 use Mitch\LaravelDoctrine\Configuration\SqliteMapper;
 use Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener;
+use Mitch\LaravelDoctrine\EventListeners\TablePrefixListener;
 use Mitch\LaravelDoctrine\Filters\TrashedFilter;
 use Mitch\LaravelDoctrine\Validation\DoctrinePresenceVerifier;
 
@@ -25,6 +26,16 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
      */
     protected $defer = false;
 
+    /**
+     * Stores the active connection configuration provided by Laravel.
+     *
+     * @var array
+     */
+    private $connectionConfiguration;
+
+    /**
+     * Boot the service provider, registering the package and defining the namespace.
+     */
     public function boot()
     {
         $this->package('mitchellvanw/laravel-doctrine', 'doctrine', __DIR__ . '/..');
@@ -110,6 +121,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
                 $metadata->setProxyNamespace($config['proxy']['namespace']);
 
             $eventManager = new EventManager;
+            $eventManager->addEventListener(Events::loadClassMetadata, new TablePrefixListener($this->connection->prefix));
             $eventManager->addEventListener(Events::onFlush, new SoftDeletableListener);
             $entityManager = EntityManager::create($this->mapLaravelToDoctrineConfig($app['config']), $metadata, $eventManager);
             $entityManager->getFilters()->enable('trashed');
@@ -161,7 +173,8 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     private function mapLaravelToDoctrineConfig($config)
     {
         $default = $config['database.default'];
-        $connection = $config["database.connections.{$default}"];
-        return App::make(DriverMapper::class)->map($connection);
+        $this->connectionConfiguration = $config["database.connections.{$default}"];
+
+        return App::make(DriverMapper::class)->map($this->connectionConfiguration);
     }
 }
