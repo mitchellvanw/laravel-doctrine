@@ -41,6 +41,6 @@ class SqliteMapper implements Mapper
 		if ($configuration['database'] == ':memory:')
 			$sqliteConfig['memory'] = true;
 		else
-			$sqliteConfig['path'] = app_path('database').'/'.$configuration['database'].'.sqlite';
+			$sqliteConfig['path'] = $configuration['database'];
 	}
-} 
+}
