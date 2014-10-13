@@ -14,7 +14,9 @@ use Mitch\LaravelDoctrine\Configuration\DriverMapper;
 use Mitch\LaravelDoctrine\Configuration\SqlMapper;
 use Mitch\LaravelDoctrine\Configuration\SqliteMapper;
 use Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener;
+use Mitch\LaravelDoctrine\EventListeners\TablePrefixListener;
 use Mitch\LaravelDoctrine\Filters\TrashedFilter;
+use Mitch\LaravelDoctrine\Validation\DoctrinePresenceVerifier;
 
 class LaravelDoctrineServiceProvider extends ServiceProvider
 {
@@ -24,6 +26,16 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
      */
     protected $defer = false;
 
+    /**
+     * Stores the active connection configuration provided by Laravel.
+     *
+     * @var array
+     */
+    private $connectionConfiguration;
+
+    /**
+     * Boot the service provider, registering the package and defining the namespace.
+     */
     public function boot()
     {
         $this->package('mitchellvanw/laravel-doctrine', 'doctrine', __DIR__ . '/..');
@@ -40,6 +52,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         $this->registerCacheManager();
         $this->registerEntityManager();
         $this->registerClassMetadataFactory();
+        $this->registerValidationVerifier();
 
         $this->commands([
             'Mitch\LaravelDoctrine\Console\GenerateProxiesCommand',
@@ -60,6 +73,18 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             $mapper->registerMapper(new SqlMapper);
             $mapper->registerMapper(new SqliteMapper);
             return $mapper;
+        });
+    }
+
+    /**
+     * Registers a new presence verifier for Laravel 4 validation. Specifically, this
+     * is for the use of the Doctrine ORM.
+     */
+    public function registerValidationVerifier()
+    {
+        $this->app->bindShared('validation.presence', function()
+        {
+            return new DoctrinePresenceVerifier;
         });
     }
 
@@ -96,6 +121,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
                 $metadata->setProxyNamespace($config['proxy']['namespace']);
 
             $eventManager = new EventManager;
+            $eventManager->addEventListener(Events::loadClassMetadata, new TablePrefixListener($this->connection->prefix));
             $eventManager->addEventListener(Events::onFlush, new SoftDeletableListener);
             $entityManager = EntityManager::create($this->mapLaravelToDoctrineConfig($app['config']), $metadata, $eventManager);
             $entityManager->getFilters()->enable('trashed');
@@ -147,7 +173,8 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     private function mapLaravelToDoctrineConfig($config)
     {
         $default = $config['database.default'];
-        $connection = $config["database.connections.{$default}"];
-        return App::make(DriverMapper::class)->map($connection);
+        $this->connectionConfiguration = $config["database.connections.{$default}"];
+
+        return App::make(DriverMapper::class)->map($this->connectionConfiguration);
     }
 }
