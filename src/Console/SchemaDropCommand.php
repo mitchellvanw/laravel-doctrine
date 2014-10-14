@@ -1,8 +1,8 @@
-<?php namespace Mitch\LaravelDoctrine\Console; 
+<?php namespace Mitch\LaravelDoctrine\Console;
 
 use Illuminate\Console\Command;
 use Doctrine\ORM\Tools\SchemaTool;
-use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Input\InputOption;
 
 class SchemaDropCommand extends Command
@@ -29,18 +29,18 @@ class SchemaDropCommand extends Command
     private $tool;
 
     /**
-     * The class metadata factory
-     *
-     * @var \Doctrine\ORM\Tools\SchemaTool
-     */
-    private $metadata;
+      * The ManagerRegistry
+      *
+      * @var \Doctrine\Common\Persistence\ManagerRegistry
+      */
+    private $registry;
 
-    public function __construct(SchemaTool $tool, ClassMetadataFactory $metadata)
+    public function __construct(SchemaTool $tool, ManagerRegistry $registry)
     {
         parent::__construct();
 
         $this->tool = $tool;
-        $this->metadata = $metadata;
+        $this->registry = $registry;
     }
 
     /**
@@ -50,18 +50,21 @@ class SchemaDropCommand extends Command
      */
     public function fire()
     {
-        $sql = $this->tool->getDropSchemaSQL($this->metadata->getAllMetadata());
-        if (empty($sql)) {
-            $this->info('Current models do not exist in schema.');
-            return;
-        }
-        if ($this->option('sql')) {
-            $this->info('Outputting drop query:');
-            $this->info(implode(';' . PHP_EOL, $sql));
-        } else {
-            $this->info('Dropping database schema....');
-            $this->tool->dropSchema($this->metadata->getAllMetadata());
-            $this->info('Schema has been dropped!');
+        foreach ($this->registry->getManagerNames() as $key => $value) {
+            $manager = $this->registry->getManager($key);
+            $sql = $this->tool->getDropSchemaSQL($manager->getMetadataFactory()->getAllMetadata());
+            if (empty($sql)) {
+                $this->info('Current models do not exist in schema.');
+                continue;
+            }
+            if ($this->option('sql')) {
+                $this->info('Outputting drop query:');
+                $this->info(implode(';' . PHP_EOL, $sql));
+            } else {
+                $this->info('Dropping database schema....');
+                $this->tool->dropSchema($manager->getMetadataFactory()->getAllMetadata());
+                $this->info('Schema has been dropped!');
+            }
         }
     }
 
@@ -72,4 +75,3 @@ class SchemaDropCommand extends Command
         ];
     }
 }
-

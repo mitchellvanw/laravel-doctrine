@@ -2,7 +2,7 @@
 
 use Illuminate\Console\Command;
 use Doctrine\ORM\Tools\SchemaTool;
-use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Input\InputOption;
 
 class SchemaCreateCommand extends Command
@@ -29,18 +29,18 @@ class SchemaCreateCommand extends Command
     private $tool;
 
     /**
-     * The class metadata factory
+     * The ManagerRegistry
      *
-     * @var \Doctrine\ORM\Tools\SchemaTool
+     * @var \Doctrine\Common\Persistence\ManagerRegistry
      */
-    private $metadata;
+    private $registry;
 
-    public function __construct(SchemaTool $tool, ClassMetadataFactory $metadata)
+    public function __construct(SchemaTool $tool, ManagerRegistry $registry)
     {
         parent::__construct();
 
         $this->tool = $tool;
-        $this->metadata = $metadata;
+        $this->registry = $registry;
     }
 
     /**
@@ -52,11 +52,17 @@ class SchemaCreateCommand extends Command
     {
         if ($this->option('sql')) {
             $this->info('Outputting create query:'.PHP_EOL);
-            $sql = $this->tool->getCreateSchemaSql($this->metadata->getAllMetadata());
-            $this->info(implode(';'.PHP_EOL, $sql));
+            foreach ($this->registry->getManagerNames() as $key => $value) {
+                $manager = $this->registry->getManager($key);
+                $sql = $this->tool->getCreateSchemaSql($manager->getMetadataFactory()->getAllMetadata());
+                $this->info(implode(';'.PHP_EOL, $sql));
+            }
         } else {
             $this->info('Creating database schema...');
-            $this->tool->createSchema($this->metadata->getAllMetadata());
+            foreach ($this->registry->getManagerNames() as $key => $value) {
+                $manager = $this->registry->getManager($key);
+                $this->tool->createSchema($manager->getMetadataFactory()->getAllMetadata());
+            }
             $this->info('Schema has been created!');
         }
     }
@@ -67,4 +73,4 @@ class SchemaCreateCommand extends Command
             ['sql', false, InputOption::VALUE_NONE, 'Dumps SQL query and does not execute creation.']
         ];
     }
-} 
+}

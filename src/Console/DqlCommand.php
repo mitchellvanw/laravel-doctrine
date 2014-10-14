@@ -1,7 +1,7 @@
 <?php  namespace Mitch\LaravelDoctrine\Console;
 
 use Doctrine\Common\Util\Debug;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -28,11 +28,11 @@ class DqlCommand extends Command
      */
     private $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct();
 
-        $this->entityManager = $entityManager;
+        $this->entityManager = $registry->getManager();
     }
 
     public function fire()
@@ -53,4 +53,4 @@ class DqlCommand extends Command
             ['hydrate', null, InputOption::VALUE_OPTIONAL, 'Hydrate type. Available: object, array, scalar, single_scalar, simpleobject']
         ];
     }
-} 
+}
