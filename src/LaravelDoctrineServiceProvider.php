@@ -101,7 +101,8 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             $entityManager->getFilters()->enable('trashed');
             return $entityManager;
         });
-        $this->app->singleton(EntityManagerInterface::class, EntityManager::class);
+
+        $this->app->alias(EntityManager::class, EntityManagerInterface::class);
     }
 
     private function registerClassMetadataFactory()
