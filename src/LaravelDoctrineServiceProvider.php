@@ -123,22 +123,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         });
     }
 
-    /**
-     * Get the services provided by the provider.
-     * @return array
-     */
-    public function provides()
-    {
-        return [
-            CacheManager::class,
-            EntityManagerInterface::class,
-            EntityManager::class,
-            ClassMetadataFactory::class,
-            DriverMapper::class,
-            AuthManager::class,
-        ];
-    }
-
+   
     /**
      * Map Laravel's to Doctrine's database configuration requirements.
      * @param $config
