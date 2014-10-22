@@ -27,6 +27,8 @@ return [
             'port' => 11211
         ]
     ],
+    
+    'doctrine_extensions' => null,    
 
     'repository' => 'Doctrine\ORM\EntityRepository',
 
