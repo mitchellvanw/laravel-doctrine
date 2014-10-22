@@ -96,6 +96,15 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
                 $metadata->setProxyNamespace($config['proxy']['namespace']);
 
             $eventManager = new EventManager;
+            
+            if(isset($config['doctrine_extensions']) && is_array($config['doctrine_extensions'])) {
+                foreach($config['doctrine_extensions'] as $extension) 
+                {
+                    $listener = new $extension();
+                    $eventManager->addEventSubscriber($listener);
+                }
+            }
+            
             $eventManager->addEventListener(Events::onFlush, new SoftDeletableListener);
             $entityManager = EntityManager::create($this->mapLaravelToDoctrineConfig($app['config']), $metadata, $eventManager);
             $entityManager->getFilters()->enable('trashed');
