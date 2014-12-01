@@ -50,6 +50,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             $manager->add(new CacheProviders\MemcacheProvider);
             $manager->add(new CacheProviders\RedisProvider);
             $manager->add(new CacheProviders\XcacheProvider);
+            $manager->add(new CacheProviders\ArrayProvider);
             $manager->add(new CacheProviders\NullProvider);
             return $manager;
         });
