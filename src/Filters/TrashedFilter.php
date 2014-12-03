@@ -2,6 +2,7 @@
 
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Filter\SQLFilter;
+use Mitch\LaravelDoctrine\Traits\SoftDeletes;
 
 class TrashedFilter extends SQLFilter
 {
@@ -12,6 +13,6 @@ class TrashedFilter extends SQLFilter
 
     private function isSoftDeletable($entity)
     {
-        return array_key_exists('Mitch\LaravelDoctrine\Traits\SoftDeletes', class_uses($entity));
+        return array_key_exists(SoftDeletes::class, class_uses_recursive($entity));
     }
 }
