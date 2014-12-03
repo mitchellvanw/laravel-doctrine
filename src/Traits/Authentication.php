@@ -4,8 +4,6 @@ use Doctrine\ORM\Mapping AS ORM;
 
 trait Authentication
 {
-    use RememberToken;
-
     /**
      * @ORM\Column(type="string")
      */
@@ -33,7 +31,7 @@ trait Authentication
      */
     public function getAuthIdentifier()
     {
-        return $this->getId();
+        return method_exists($this, 'getKeyName') ? $this->getKeyName() : 'id';
     }
 
     /**
