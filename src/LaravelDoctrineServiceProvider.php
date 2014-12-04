@@ -3,6 +3,7 @@
 use App;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Tools\Setup;
+use Doctrine\ORM\EntityManager;
 use Doctrine\Common\EventManager;
 use Illuminate\Support\ServiceProvider;
 use Mitch\LaravelDoctrine\Cache;
