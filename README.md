@@ -4,7 +4,7 @@
 [![License](https://poser.pugx.org/mitchellvanw/laravel-doctrine/license.png)](https://packagist.org/packages/mitchellvanw/laravel-doctrine)
 [![Total Downloads](https://poser.pugx.org/mitchellvanw/laravel-doctrine/downloads.png)](https://packagist.org/packages/mitchellvanw/laravel-doctrine)
 
-A Doctrine 2 implementation that melts with Laravel 4.
+A Doctrine 2 implementation that melts with Laravel 5.
 
 ## Documentation
 
@@ -31,7 +31,9 @@ the `minimum-stability` in your `composer.json` to `dev`.
 
 If you don't want to affect the stability of the rest of the packages, you can add the following property in your `composer.json`:
 
+```
 "prefer-stable": true
+```
 
 ## Installation
 
@@ -41,7 +43,7 @@ Begin by installing the package through Composer. Edit your project's `composer.
 
 ```php
 "require": {
-    "mitchellvanw/laravel-doctrine": "0.4.*"
+    "mitchellvanw/laravel-doctrine": "1.*"
 }
 ```
 
@@ -66,7 +68,7 @@ After This you'll need to add the facade. Open your `app/config/app.php` configu
 It's recommended to publish the package configuration.
 
 ```php
-php artisan config:publish mitchellvanw/laravel-doctrine --path=vendor/mitchellvanw/laravel-doctrine/config
+php artisan publish:config mitchellvanw/laravel-doctrine --path=vendor/mitchellvanw/laravel-doctrine/config
 ```
 
 ## 2 Minutes
@@ -94,7 +96,6 @@ use Doctrine\ORM\Mapping AS ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="users")
  */
 class User
 {
