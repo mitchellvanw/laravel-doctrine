@@ -3,38 +3,22 @@
 use Illuminate\Console\Command;
 use Doctrine\ORM\EntityManagerInterface;
 
-class GenerateProxiesCommand extends Command
-{
-    /**
-     * The console command name.
-     *
-     * @var string
-     */
-    protected $name = 'doctrine:generate:proxies';
+class GenerateProxiesCommand extends Command {
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
+    protected $name = 'doctrine:generate:proxies';
     protected $description = 'Generate proxies for entities.';
 
     /**
-     * The Entity Manager
-     *
-     * @var \Doctrine\ORM\EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
-    {
+    public function __construct(EntityManagerInterface $entityManager) {
         parent::__construct();
-
         $this->entityManager = $entityManager;
     }
 
-    public function fire()
-    {
+    public function fire() {
         $this->info('Starting proxy generation....');
         $metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
         if (empty($metadata)) {
@@ -47,9 +31,8 @@ class GenerateProxiesCommand extends Command
             exit;
         }
         $this->info('Processing entities:');
-        foreach ($metadata as $item) {
+        foreach ($metadata as $item)
             $this->line($item->name);
-        }
         $this->entityManager->getProxyFactory()->generateProxyClasses($metadata, $directory);
         $this->info('Proxies have been created.');
     }

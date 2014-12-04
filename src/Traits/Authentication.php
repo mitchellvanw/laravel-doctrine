@@ -2,8 +2,8 @@
 
 use Doctrine\ORM\Mapping AS ORM;
 
-trait Authentication
-{
+trait Authentication {
+
     /**
      * @ORM\Column(type="string")
      */
@@ -14,64 +14,52 @@ trait Authentication
      */
     private $rememberToken;
 
-    public function getPassword()
-    {
+    public function getPassword() {
         return $this->password;
     }
 
-    public function setPassword($password)
-    {
+    public function setPassword($password) {
         $this->password = $password;
     }
 
     /**
      * Get the unique identifier for the user.
-     *
      * @return mixed
      */
-    public function getAuthIdentifier()
-    {
+    public function getAuthIdentifier() {
         return method_exists($this, 'getKeyName') ? $this->getKeyName() : 'id';
     }
 
     /**
      * Get the password for the user.
-     *
      * @return string
      */
-    public function getAuthPassword()
-    {
+    public function getAuthPassword() {
         return $this->getPassword();
     }
 
     /**
      * Get the token value for the "remember me" session.
-     *
      * @return string
      */
-    public function getRememberToken()
-    {
+    public function getRememberToken() {
         return $this->rememberToken;
     }
 
     /**
      * Set the token value for the "remember me" session.
-     *
      * @param  string $value
      * @return void
      */
-    public function setRememberToken($value)
-    {
+    public function setRememberToken($value) {
         $this->rememberToken = $value;
     }
 
     /**
      * Get the column name for the "remember me" token.
-     *
      * @return string
      */
-    public function getRememberTokenName()
-    {
+    public function getRememberTokenName() {
         return 'remember_token';
     }
 } 

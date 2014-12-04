@@ -3,10 +3,9 @@
 use Doctrine\Common\Cache\MemcacheCache;
 use Memcache;
 
-class MemcacheProvider implements Provider
-{
-    public function make($config = null)
-    {
+class MemcacheProvider implements Provider {
+
+    public function make($config = null) {
         if ( ! extension_loaded('memcache'))
             throw new \RuntimeException('Memcache extension was not loaded.');
 
@@ -18,8 +17,7 @@ class MemcacheProvider implements Provider
         return $cache;
     }
 
-    public function isAppropriate($provider)
-    {
+    public function isAppropriate($provider) {
         return $provider == 'memcache';
     }
 }
