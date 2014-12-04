@@ -7,8 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\Common\EventManager;
 use Illuminate\Support\ServiceProvider;
 use Mitch\LaravelDoctrine\Cache;
-use Mitch\LaravelDoctrine\Configuration\SqlMapper;
-use Mitch\LaravelDoctrine\Configuration\SqliteMapper;
+use Mitch\LaravelDoctrine\Configuration;
 use Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener;
 
 class LaravelDoctrineServiceProvider extends ServiceProvider {
@@ -48,9 +47,9 @@ class LaravelDoctrineServiceProvider extends ServiceProvider {
      */
     private function registerConfigurationMapper() {
         $this->app->bind('Mitch\LaravelDoctrine\Configuration\DriverMapper', function () {
-            $mapper = new DriverMapper;
-            $mapper->registerMapper(new SqlMapper);
-            $mapper->registerMapper(new SqliteMapper);
+            $mapper = new Configuration\DriverMapper;
+            $mapper->registerMapper(new Configuration\SqlMapper);
+            $mapper->registerMapper(new Configuration\SqliteMapper);
             return $mapper;
         });
     }
