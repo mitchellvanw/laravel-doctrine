@@ -8,19 +8,9 @@ class GenerateProxiesCommand extends Command {
     protected $name = 'doctrine:generate:proxies';
     protected $description = 'Generate proxies for entities.';
 
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager) {
-        parent::__construct();
-        $this->entityManager = $entityManager;
-    }
-
-    public function fire() {
+    public function fire(EntityManagerInterface $entityManager) {
         $this->info('Starting proxy generation....');
-        $metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
+        $metadata = $entityManager->getMetadataFactory()->getAllMetadata();
         if (empty($metadata)) {
             $this->error('No metadata found to generate any entities.');
             exit;
@@ -33,7 +23,7 @@ class GenerateProxiesCommand extends Command {
         $this->info('Processing entities:');
         foreach ($metadata as $item)
             $this->line($item->name);
-        $this->entityManager->getProxyFactory()->generateProxyClasses($metadata, $directory);
+        $entityManager->getProxyFactory()->generateProxyClasses($metadata, $directory);
         $this->info('Proxies have been created.');
     }
 } 

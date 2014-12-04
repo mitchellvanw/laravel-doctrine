@@ -10,25 +10,10 @@ class SchemaUpdateCommand extends Command {
     protected $name = 'doctrine:schema:update';
     protected $description = 'Update database schema to match models';
 
-    /**
-     * @var SchemaTool
-     */
-    private $tool;
-    /**
-     * @var ClassMetadataFactory
-     */
-    private $metadata;
-
-    public function __construct(SchemaTool $tool, ClassMetadataFactory $metadata) {
-        parent::__construct();
-        $this->tool = $tool;
-        $this->metadata = $metadata;
-    }
-
-    public function fire() {
+    public function fire(SchemaTool $tool, ClassMetadataFactory $metadata) {
         $this->info('Checking if database needs updating....');
         $clean = $this->option('clean');
-        $sql = $this->tool->getUpdateSchemaSql($this->metadata->getAllMetadata(), $clean);
+        $sql = $tool->getUpdateSchemaSql($metadata->getAllMetadata(), $clean);
         if (empty($sql)) {
             $this->info('No updates found.');
             return;
@@ -38,7 +23,7 @@ class SchemaUpdateCommand extends Command {
             $this->info(implode(';' . PHP_EOL, $sql));
         } else {
             $this->info('Updating database schema....');
-            $this->tool->updateSchema($this->metadata->getAllMetadata());
+            $tool->updateSchema($metadata->getAllMetadata());
             $this->info('Schema has been updated!');
         }
     }

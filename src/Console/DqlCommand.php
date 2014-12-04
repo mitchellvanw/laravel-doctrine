@@ -10,18 +10,7 @@ class DqlCommand extends Command {
     protected $name = 'doctrine:dql';
     protected $description = 'Run a DQL query.';
 
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager) {
-        parent::__construct();
-        $this->entityManager = $entityManager;
-    }
-
-    public function fire() {
-
+    public function fire(EntityManagerInterface $entityManager) {
     }
 
     protected function getArguments() {
