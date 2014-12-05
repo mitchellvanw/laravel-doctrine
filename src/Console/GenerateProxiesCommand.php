@@ -1,14 +1,15 @@
 <?php  namespace Mitch\LaravelDoctrine\Console;
 
 use Illuminate\Console\Command;
-use Doctrine\ORM\EntityManagerInterface;
 
 class GenerateProxiesCommand extends Command {
 
     protected $name = 'doctrine:generate:proxies';
     protected $description = 'Generate proxies for entities.';
 
-    public function fire(EntityManagerInterface $entityManager) {
+    public function fire() {
+        $entityManager = $this->laravel->make('Doctrine\ORM\EntityManagerInterface');
+        
         $this->info('Starting proxy generation....');
         $metadata = $entityManager->getMetadataFactory()->getAllMetadata();
         if (empty($metadata)) {

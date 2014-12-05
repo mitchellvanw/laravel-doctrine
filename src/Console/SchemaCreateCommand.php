@@ -1,8 +1,6 @@
 <?php namespace Mitch\LaravelDoctrine\Console;
 
 use Illuminate\Console\Command;
-use Doctrine\ORM\Tools\SchemaTool;
-use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Symfony\Component\Console\Input\InputOption;
 
 class SchemaCreateCommand extends Command {
@@ -10,7 +8,10 @@ class SchemaCreateCommand extends Command {
     protected $name = 'doctrine:schema:create';
     protected $description = 'Create database schema from models';
 
-    public function fire(SchemaTool $tool, ClassMetadataFactory $metadata) {
+    public function fire() {
+        $tool = $this->laravel->make('Doctrine\ORM\Tools\SchemaTool');
+        $metadata = $this->laravel->make('Doctrine\ORM\Mapping\ClassMetadataFactory');
+
         if ($this->option('sql')) {
             $this->info('Outputting create query:' . PHP_EOL);
             $sql = $tool->getCreateSchemaSql($metadata->getAllMetadata());

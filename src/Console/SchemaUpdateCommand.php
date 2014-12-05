@@ -1,8 +1,6 @@
 <?php namespace Mitch\LaravelDoctrine\Console;
 
 use Illuminate\Console\Command;
-use Doctrine\ORM\Tools\SchemaTool;
-use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Symfony\Component\Console\Input\InputOption;
 
 class SchemaUpdateCommand extends Command {
@@ -10,7 +8,10 @@ class SchemaUpdateCommand extends Command {
     protected $name = 'doctrine:schema:update';
     protected $description = 'Update database schema to match models';
 
-    public function fire(SchemaTool $tool, ClassMetadataFactory $metadata) {
+    public function fire() {
+        $tool = $this->laravel->make('Doctrine\ORM\Tools\SchemaTool');
+        $metadata = $this->laravel->make('Doctrine\ORM\Mapping\ClassMetadataFactory');
+
         $this->info('Checking if database needs updating....');
         $clean = $this->option('clean');
         $sql = $tool->getUpdateSchemaSql($metadata->getAllMetadata(), $clean);
