@@ -19,7 +19,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider {
     protected $defer = false;
 
     public function boot() {
-        $this->package('mitchellvanw/laravel-doctrine', 'doctrine', __DIR__ . '/..');
+        // $this->package('mitchellvanw/laravel-doctrine', 'doctrine', __DIR__ . '/..');
         $this->extendAuthManager();
     }
 
@@ -68,7 +68,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider {
 
     private function registerEntityManager() {
         $this->app->singleton('Doctrine\ORM\EntityManager', function ($app) {
-            $config = $app['config']['doctrine::doctrine'];
+            $config = $app['config']['doctrine'];
             $metadata = Setup::createAnnotationMetadataConfiguration(
                 $config['metadata'],
                 $app['config']['app.debug'],
@@ -102,7 +102,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider {
     private function extendAuthManager() {
         $this->app['Illuminate\Auth\AuthManager']->extend('doctrine', function ($app) {
             return new DoctrineUserProvider(
-                $app['Illuminate\Hashing\HasherInterface'],
+                $app['Illuminate\Contracts\Hashing\Hasher'],
                 $app['Doctrine\ORM\EntityManager'],
                 $app['config']['auth.model']
             );
