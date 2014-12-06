@@ -130,12 +130,6 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         $this->app->bindShared('migration.repository', function($app) {
             return $app->make('Mitch\LaravelDoctrine\Migrations\DoctrineMigrationRepository');
         });
-
-        /*$this->app->bindShared('migrator', function($app)
-        {
-            $repository = $app['migration.repository'];
-            return new Migrator($repository, $app['db'], $app['files']);
-        });*/
     }
 
     /**
