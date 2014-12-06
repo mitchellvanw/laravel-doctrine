@@ -36,7 +36,18 @@ class DoctrineMigrationRepository implements MigrationRepositoryInterface {
      */
     public function getRan()
     {
-        return $this->query()->getQuery()->getResult();
+        $migrations = $this->entities->createQueryBuilder()
+            ->select('o.migration')
+            ->from('Mitch\LaravelDoctrine\Migrations\Migration', 'o')
+            ->getQuery()->getResult();
+
+        $return = [];
+
+        foreach($migrations as $migration) {
+            $return[] = $migration['migration'];
+        }
+
+        return $return;
     }
 
     /**
