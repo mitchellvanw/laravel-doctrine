@@ -15,6 +15,7 @@ use Mitch\LaravelDoctrine\Configuration\SqlMapper;
 use Mitch\LaravelDoctrine\Configuration\SqliteMapper;
 use Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener;
 use Mitch\LaravelDoctrine\Filters\TrashedFilter;
+use Mitch\LaravelDoctrine\Migrations\DoctrineMigrationRepository;
 
 class LaravelDoctrineServiceProvider extends ServiceProvider
 {
@@ -28,6 +29,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     {
         $this->package('mitchellvanw/laravel-doctrine', 'doctrine', __DIR__ . '/..');
         $this->extendAuthManager();
+        $this->extendMigrator();
     }
 
     /**
@@ -80,6 +82,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     {
         $this->app->singleton(EntityManager::class, function ($app) {
             $config = $app['config']['doctrine::doctrine'];
+            $config['metadata'][] = __DIR__ . '/Migrations';
             $metadata = Setup::createAnnotationMetadataConfiguration(
                 $config['metadata'],
                 $app['config']['app.debug'],
@@ -120,6 +123,19 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
                 $app['config']['auth.model']
             );
         });
+    }
+
+    private function extendMigrator()
+    {
+        $this->app->bindShared('migration.repository', function($app) {
+            return $app->make('Mitch\LaravelDoctrine\Migrations\DoctrineMigrationRepository');
+        });
+
+        /*$this->app->bindShared('migrator', function($app)
+        {
+            $repository = $app['migration.repository'];
+            return new Migrator($repository, $app['db'], $app['files']);
+        });*/
     }
 
     /**
