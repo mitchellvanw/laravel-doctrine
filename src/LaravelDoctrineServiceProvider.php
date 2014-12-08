@@ -19,7 +19,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider {
     protected $defer = false;
 
     public function boot() {
-        // $this->package('mitchellvanw/laravel-doctrine', 'doctrine', __DIR__ . '/..');
+        $this->package('mitchellvanw/laravel-doctrine', 'doctrine', __DIR__ . '/..');
         $this->extendAuthManager();
     }
 
@@ -68,7 +68,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider {
 
     private function registerEntityManager() {
         $this->app->singleton('Doctrine\ORM\EntityManager', function ($app) {
-            $config = $app['config']['doctrine'];
+            $config = $app['config']['doctrine::doctrine'];
             $metadata = Setup::createAnnotationMetadataConfiguration(
                 $config['metadata'],
                 $app['config']['app.debug'],
