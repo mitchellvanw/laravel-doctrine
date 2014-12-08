@@ -9,7 +9,7 @@ class GenerateProxiesCommand extends Command {
 
     public function fire() {
         $entityManager = $this->laravel->make('Doctrine\ORM\EntityManagerInterface');
-        
+
         $this->info('Starting proxy generation....');
         $metadata = $entityManager->getMetadataFactory()->getAllMetadata();
         if (empty($metadata)) {
