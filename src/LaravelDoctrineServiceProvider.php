@@ -42,6 +42,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         $this->registerCacheManager();
         $this->registerEntityManager();
         $this->registerClassMetadataFactory();
+        $this->registerReminderRepository();
 
         $this->commands([
             'Mitch\LaravelDoctrine\Console\GenerateProxiesCommand',
@@ -82,7 +83,12 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     {
         $this->app->singleton(EntityManager::class, function ($app) {
             $config = $app['config']['doctrine::doctrine'];
-            $config['metadata'][] = __DIR__ . '/Migrations';
+
+            $config['metadata'] = array_merge($config['metadata'], [
+                __DIR__ . '/Migrations',
+                __DIR__ . '/Reminders'
+            ]);
+
             $metadata = Setup::createAnnotationMetadataConfiguration(
                 $config['metadata'],
                 $app['config']['app.debug'],
@@ -129,6 +135,17 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     {
         $this->app->bindShared('migration.repository', function($app) {
             return $app->make('Mitch\LaravelDoctrine\Migrations\DoctrineMigrationRepository');
+        });
+    }
+
+    private function registerReminderRepository()
+    {
+        $this->app->bindShared('auth.reminder.repository', function($app) {
+            $key = $app['config']['app.key'];
+
+            $expire = $app['config']->get('auth.reminder.expire', 60);
+
+            return new DbRepository($app->make('Doctrine\ORM\EntityManagerInterface'), $key, $expire);
         });
     }
 
