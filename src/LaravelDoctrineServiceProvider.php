@@ -15,7 +15,7 @@ use Mitch\LaravelDoctrine\Configuration\SqlMapper;
 use Mitch\LaravelDoctrine\Configuration\SqliteMapper;
 use Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener;
 use Mitch\LaravelDoctrine\Filters\TrashedFilter;
-use Mitch\LaravelDoctrine\Migrations\DoctrineMigrationRepository;
+use Mitch\LaravelDoctrine\Reminders\DoctrineReminderRepository;
 
 class LaravelDoctrineServiceProvider extends ServiceProvider
 {
@@ -145,7 +145,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 
             $expire = $app['config']->get('auth.reminder.expire', 60);
 
-            return new DbRepository($app->make('Doctrine\ORM\EntityManagerInterface'), $key, $expire);
+            return new DoctrineReminderRepository($app->make('Doctrine\ORM\EntityManagerInterface'), $key, $expire);
         });
     }
 
