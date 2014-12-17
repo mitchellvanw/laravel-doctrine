@@ -2,8 +2,8 @@
 
 use Doctrine\ORM\Cache;
 use Doctrine\ORM\Configuration;
-use Illuminate\Contracts\Config\Repository;
 use Mitch\LaravelDoctrine\CacheManager;
+use Illuminate\Contracts\Config\Repository;
 use Mitch\LaravelDoctrine\Metadata\MetadataStrategyFactory;
 
 class ConfigurationFactory
