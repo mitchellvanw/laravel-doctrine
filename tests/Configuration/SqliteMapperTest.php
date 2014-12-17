@@ -7,6 +7,9 @@ use Tests\Stubs\ApplicationStub;
 
 class SqliteMapperTest extends \PHPUnit_Framework_TestCase
 {
+	/**
+	 * @type SqliteMapper
+	 */
 	private $sqlMapper;
 
 	public function setUp()

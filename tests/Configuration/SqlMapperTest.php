@@ -5,6 +5,9 @@ use Mockery as m;
 
 class SqlMapperTest extends \PHPUnit_Framework_TestCase
 {
+	/**
+	 * @type SqlMapper
+	 */
 	private $sqlMapper;
 
 	public function setUp()
