@@ -81,7 +81,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         $this->app->singleton(EntityManager::class, function ($app) {
             $config = $app['config']['doctrine::doctrine'];
             $metadata = Setup::createAnnotationMetadataConfiguration(
-                $config['metadata'],
+                $config['metadata']['paths'],
                 $app['config']['app.debug'],
                 $config['proxy']['directory'],
                 $app[CacheManager::class]->getCache($config['cache_provider']),
@@ -91,6 +91,9 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             $metadata->setAutoGenerateProxyClasses($config['proxy']['auto_generate']);
             $metadata->setDefaultRepositoryClassName($config['repository']);
             $metadata->setSQLLogger($config['logger']);
+
+            if (isset($config['metadata']['naming_strategy']))
+                $metadata->setNamingStrategy($app->make($config['metadata']['naming_strategy']));
 
             if (isset($config['proxy']['namespace']))
                 $metadata->setProxyNamespace($config['proxy']['namespace']);
