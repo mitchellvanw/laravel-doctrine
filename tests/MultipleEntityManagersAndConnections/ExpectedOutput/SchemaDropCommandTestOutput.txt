@@ -1,0 +1,2 @@
+Outputting drop query:
+DROP TABLE user

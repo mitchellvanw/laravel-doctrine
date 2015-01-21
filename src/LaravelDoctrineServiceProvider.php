@@ -129,7 +129,6 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     {
         $registryConnections = [];
         $registryManagers = [];
-        $defaults = ['connection' => null, 'entityManager' => null];
 
         $proxyNamespace = isset($config['proxy']['namespace']) ? $config['proxy']['namespace'] : null;
 
@@ -142,11 +141,6 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             // skip connection names not defined in Laravel's database configuration
             if (!isset($databaseConnections[$connectionName])) {
                 continue;
-            }
-
-            if ($connectionName === $config['default_connection']) {
-                $defaults['connection'] = $connectionName;
-                $defaults['entityManager'] = $name;
             }
 
             $databaseConfig = $databaseConnections[$connectionName];
@@ -182,9 +176,17 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             $this->app->instance($registryConnections[$connectionName], $connection);
             $this->app->instance($registryManagers[$name], $entityManager);
 
+            if ($connectionName === $config['default_connection']) {
+                $registryConnections['default'] = 'doctrine.dbal.default_connection';
+                $registryManagers['default'] = 'doctrine.orm.default_entity_manager';
+
+                $this->app->instance('doctrine.dbal.default_connection', $connection);
+                $this->app->instance('doctrine.orm.default_entity_manager', $entityManager);
+            }
+
         }
 
-        return [$registryConnections, $registryManagers, $defaults];
+        return [$registryConnections, $registryManagers];
     }
 
     private function registerManagerRegistry()
@@ -196,7 +198,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 
             $config = $this->mapEntityManagers($config, $defaultDatabase);
 
-            list($registryConnections, $registryManagers, $defaults) = $this->createManagerInstances(
+            list($registryConnections, $registryManagers) = $this->createManagerInstances(
                 $config,
                 $databaseConnections,
                 $app['config']['app.debug'],
@@ -206,9 +208,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             return new IlluminateRegistry(
                 $app,
                 $registryConnections,
-                $registryManagers,
-                $defaults['connection'],
-                $defaults['entityManager']
+                $registryManagers
             );
         });
         $this->app->singleton(ManagerRegistry::class, IlluminateRegistry::class);

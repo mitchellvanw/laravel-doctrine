@@ -16,8 +16,7 @@ use Mitch\LaravelDoctrine\Configuration\SqliteMapper;
 abstract class AbstractDatabaseMappingTest extends \PHPUnit_Framework_TestCase
 {
     protected $sp;
-    protected $containerStub;
-    protected $containerInstances = array();
+    protected $container;
 
     protected function callMethod($obj, $name, array $args)
     {
@@ -25,18 +24,6 @@ abstract class AbstractDatabaseMappingTest extends \PHPUnit_Framework_TestCase
         $method = $class->getMethod($name);
         $method->setAccessible(true);
         return $method->invokeArgs($obj, $args);
-    }
-
-    public function make($abstract, $parameters = array())
-    {
-        if (isset($this->containerInstances[$abstract])) {
-            return $this->containerInstances[$abstract];
-        }
-    }
-
-    public function instance($abstract, $instance)
-    {
-        $this->containerInstances[$abstract] = $instance;
     }
 
     protected function createCacheManager($cacheConfig)
@@ -100,7 +87,7 @@ abstract class AbstractDatabaseMappingTest extends \PHPUnit_Framework_TestCase
             'simple_annotations' => false,
 
             'metadata' => [
-                __DIR__.'/Models',
+                __DIR__.DIRECTORY_SEPARATOR.'Models',
             ],
 
             'proxy' => [
@@ -134,20 +121,17 @@ abstract class AbstractDatabaseMappingTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $mapper = new DriverMapper;
-        $mapper->registerMapper(new SqlMapper);
-        $mapper->registerMapper(new SqliteMapper);
 
-        $this->containerInstances[DriverMapper::class] = $mapper;
+        $container = new Container();
 
-        $containerStub = $this->getMock('\Illuminate\Container\Container');
-        $containerStub->expects($this->any())
-            ->method('make')
-            ->will($this->returnCallback([$this,'make']));
-        $containerStub->expects($this->any())
-            ->method('instance')
-            ->will($this->returnCallback([$this,'instance']));
-        $this->sp = new LaravelDoctrineServiceProvider($containerStub);
-        $this->containerStub = $containerStub;
+        $container->bind(DriverMapper::class, function () {
+            $mapper = new DriverMapper;
+            $mapper->registerMapper(new SqlMapper);
+            $mapper->registerMapper(new SqliteMapper);
+            return $mapper;
+        });
+
+        $this->sp = new LaravelDoctrineServiceProvider($container);
+        $this->container = $container;
     }
 }

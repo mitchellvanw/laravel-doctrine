@@ -14,17 +14,15 @@ final class IlluminateRegistry extends AbstractManagerRegistry
     public function __construct(
         Container $container,
         array $connections,
-        array $entityManagers,
-        $defaultConnection,
-        $defaultEntityManager
+        array $entityManagers
     ) {
         $this->container = $container;
         parent::__construct(
             'ORM',
             $connections,
             $entityManagers,
-            $defaultConnection,
-            $defaultEntityManager,
+            'default',
+            'default',
             'Doctrine\ORM\Proxy\Proxy'
         );
     }

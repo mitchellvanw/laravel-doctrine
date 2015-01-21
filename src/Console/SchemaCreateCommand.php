@@ -22,24 +22,16 @@ class SchemaCreateCommand extends Command
     protected $description = 'Create database schema from models';
 
     /**
-     * The schema tool.
-     *
-     * @var \Doctrine\ORM\Tools\SchemaTool
-     */
-    private $tool;
-
-    /**
      * The ManagerRegistry
      *
      * @var \Doctrine\Common\Persistence\ManagerRegistry
      */
     private $registry;
 
-    public function __construct(SchemaTool $tool, ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct();
 
-        $this->tool = $tool;
         $this->registry = $registry;
     }
 
@@ -50,19 +42,21 @@ class SchemaCreateCommand extends Command
      */
     public function fire()
     {
+        if ($this->option('em')) {
+            $manager = $this->registry->getManager($this->option('em'));
+        } else {
+            $manager = $this->registry->getManager();
+        }
+
+        $tool = new SchemaTool($manager);
+
         if ($this->option('sql')) {
             $this->info('Outputting create query:'.PHP_EOL);
-            foreach ($this->registry->getManagerNames() as $key => $value) {
-                $manager = $this->registry->getManager($key);
-                $sql = $this->tool->getCreateSchemaSql($manager->getMetadataFactory()->getAllMetadata());
-                $this->info(implode(';'.PHP_EOL, $sql));
-            }
+            $sql = $tool->getCreateSchemaSql($manager->getMetadataFactory()->getAllMetadata());
+            $this->info(implode(';'.PHP_EOL, $sql));
         } else {
             $this->info('Creating database schema...');
-            foreach ($this->registry->getManagerNames() as $key => $value) {
-                $manager = $this->registry->getManager($key);
-                $this->tool->createSchema($manager->getMetadataFactory()->getAllMetadata());
-            }
+            $tool->createSchema($manager->getMetadataFactory()->getAllMetadata());
             $this->info('Schema has been created!');
         }
     }
@@ -70,7 +64,8 @@ class SchemaCreateCommand extends Command
     protected function getOptions()
     {
         return [
-            ['sql', false, InputOption::VALUE_NONE, 'Dumps SQL query and does not execute creation.']
+            ['sql', false, InputOption::VALUE_NONE, 'Dumps SQL query and does not execute creation.'],
+            ['em', false, InputOption::VALUE_REQUIRED, 'Sets the entity manager when the default is not desired.'],
         ];
     }
 }

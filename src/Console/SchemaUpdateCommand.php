@@ -35,11 +35,10 @@ class SchemaUpdateCommand extends Command
       */
     private $registry;
 
-    public function __construct(SchemaTool $tool, ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct();
 
-        $this->tool = $tool;
         $this->registry = $registry;
     }
 
@@ -52,21 +51,28 @@ class SchemaUpdateCommand extends Command
     {
         $this->info('Checking if database needs updating....');
         $clean = $this->option('clean');
-        foreach ($this->registry->getManagerNames() as $key => $value) {
-            $manager = $this->registry->getManager($key);
-            $sql = $this->tool->getUpdateSchemaSql($manager->getMetadataFactory()->getAllMetadata(), $clean);
-            if (empty($sql)) {
-                $this->info('No updates found.');
-                continue;
-            }
-            if ($this->option('sql')) {
-                $this->info('Outputting update query:');
-                $this->info(implode(';' . PHP_EOL, $sql));
-            } else {
-                $this->info('Updating database schema....');
-                $this->tool->updateSchema($this->metadata->getAllMetadata());
-                $this->info('Schema has been updated!');
-            }
+
+        if ($this->option('em')) {
+            $manager = $this->registry->getManager($this->option('em'));
+        } else {
+            $manager = $this->registry->getManager();
+        }
+
+        $tool = new SchemaTool($manager);
+
+        $sql = $tool->getUpdateSchemaSql($manager->getMetadataFactory()->getAllMetadata(), $clean);
+
+        if (empty($sql)) {
+            $this->info('No updates found.');
+            exit;
+        }
+        if ($this->option('sql')) {
+            $this->info('Outputting update query:');
+            $this->info(implode(';' . PHP_EOL, $sql));
+        } else {
+            $this->info('Updating database schema....');
+            $tool->updateSchema($manager->getMetadataFactory()->getAllMetadata());
+            $this->info('Schema has been updated!');
         }
     }
 
@@ -74,7 +80,8 @@ class SchemaUpdateCommand extends Command
     {
         return [
             ['sql', false, InputOption::VALUE_NONE, 'Dumps SQL query and does not execute update.'],
-            ['clean', null, InputOption::VALUE_OPTIONAL, 'When using clean model all non-relevant to this metadata assets will be cleared.']
+            ['clean', null, InputOption::VALUE_OPTIONAL, 'When using clean model all non-relevant to this metadata assets will be cleared.'],
+            ['em', false, InputOption::VALUE_REQUIRED, 'Sets the entity manager when the default is not desired.'],
         ];
     }
 }

@@ -7,17 +7,17 @@ use Mitch\LaravelDoctrine\Console\SchemaDropCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class SchemaCreateCommandTest extends AbstractDatabaseMappingTest
+class SchemaDropCommandTest extends AbstractDatabaseMappingTest
 {
     protected $expected;
 
-    public function setup()
+    public function setUp()
     {
         parent::setup();
-        $this->expected = file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'ExpectedOutput'.DIRECTORY_SEPARATOR.'SchemaCreateCommandTestOutput.txt');
+        $this->expected = file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'ExpectedOutput'.DIRECTORY_SEPARATOR.'SchemaDropCommandTestOutput.txt');
     }
 
-    public function testDefaultCreate()
+    public function testDefaultDrop()
     {
         $laravelDBConfig = $this->getLaravelDBConfig();
         $basicDoctrineConfig = $this->getBasicDoctrineConfiguration();
@@ -49,27 +49,27 @@ class SchemaCreateCommandTest extends AbstractDatabaseMappingTest
 
         $command = new SchemaCreateCommand($registry);
         $command->setLaravel($this->container);
-        $input = new ArrayInput(['--sql' => null]);
+        $inputNoOptions = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command->run($input, $output);
+        $command->run($inputNoOptions, $output);
+
+        $command = new SchemaDropCommand($registry);
+        $command->setLaravel($this->container);
+        $inputSql = new ArrayInput(['--sql' => null]);
+        $output = new BufferedOutput();
+
+        $command->run($inputSql, $output);
 
         $this->assertEquals(
             $this->expected,
             $output->fetch()
         );
 
-        $command = new SchemaCreateCommand($registry);
-        $command->setLaravel($this->container);
-        $input = new ArrayInput([]);
-        $command->run($input, $output);
-
-        $command = new SchemaDropCommand($registry);
-        $command->setLaravel($this->container);
-        $command->run($input, $output);
+        $command->run($inputNoOptions, $output);
     }
 
-    public function testSpecificCreate()
+    public function testSpecificDrop()
     {
         $laravelDBConfig = $this->getLaravelDBConfig();
         $basicDoctrineConfig = $this->getBasicDoctrineConfiguration();
@@ -115,23 +115,23 @@ class SchemaCreateCommandTest extends AbstractDatabaseMappingTest
 
         $command = new SchemaCreateCommand($registry);
         $command->setLaravel($this->container);
-        $input = new ArrayInput(['--sql' => null, '--em' => 'sqlite']);
+        $inputNoOptions = new ArrayInput(['--em' => 'sqlite']);
         $output = new BufferedOutput();
 
-        $command->run($input, $output);
+        $command->run($inputNoOptions, $output);
+
+        $command = new SchemaDropCommand($registry);
+        $command->setLaravel($this->container);
+        $inputSql = new ArrayInput(['--sql' => null,'--em' => 'sqlite']);
+        $output = new BufferedOutput();
+
+        $command->run($inputSql, $output);
 
         $this->assertEquals(
             $this->expected,
             $output->fetch()
         );
 
-        $command = new SchemaCreateCommand($registry);
-        $command->setLaravel($this->container);
-        $input = new ArrayInput(['--em' => 'sqlite']);
-        $command->run($input, $output);
-
-        $command = new SchemaDropCommand($registry);
-        $command->setLaravel($this->container);
-        $command->run($input, $output);
+        $command->run($inputNoOptions, $output);
     }
 }

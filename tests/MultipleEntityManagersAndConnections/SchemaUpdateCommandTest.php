@@ -2,22 +2,22 @@
 
 use Mitch\LaravelDoctrine\IlluminateRegistry;
 use Doctrine\ORM\Tools\SchemaTool;
-use Mitch\LaravelDoctrine\Console\SchemaCreateCommand;
+use Mitch\LaravelDoctrine\Console\SchemaUpdateCommand;
 use Mitch\LaravelDoctrine\Console\SchemaDropCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class SchemaCreateCommandTest extends AbstractDatabaseMappingTest
+class SchemaUpdateCommandTest extends AbstractDatabaseMappingTest
 {
     protected $expected;
 
-    public function setup()
+    public function setUp()
     {
         parent::setup();
-        $this->expected = file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'ExpectedOutput'.DIRECTORY_SEPARATOR.'SchemaCreateCommandTestOutput.txt');
+        $this->expected = file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'ExpectedOutput'.DIRECTORY_SEPARATOR.'SchemaUpdateCommandTestOutput.txt');
     }
 
-    public function testDefaultCreate()
+    public function testDefaultUpdate()
     {
         $laravelDBConfig = $this->getLaravelDBConfig();
         $basicDoctrineConfig = $this->getBasicDoctrineConfiguration();
@@ -47,7 +47,7 @@ class SchemaCreateCommandTest extends AbstractDatabaseMappingTest
             $registryManagers
         );
 
-        $command = new SchemaCreateCommand($registry);
+        $command = new SchemaUpdateCommand($registry);
         $command->setLaravel($this->container);
         $input = new ArrayInput(['--sql' => null]);
         $output = new BufferedOutput();
@@ -59,7 +59,7 @@ class SchemaCreateCommandTest extends AbstractDatabaseMappingTest
             $output->fetch()
         );
 
-        $command = new SchemaCreateCommand($registry);
+        $command = new SchemaUpdateCommand($registry);
         $command->setLaravel($this->container);
         $input = new ArrayInput([]);
         $command->run($input, $output);
@@ -69,7 +69,8 @@ class SchemaCreateCommandTest extends AbstractDatabaseMappingTest
         $command->run($input, $output);
     }
 
-    public function testSpecificCreate()
+
+    public function testSpecificUpdate()
     {
         $laravelDBConfig = $this->getLaravelDBConfig();
         $basicDoctrineConfig = $this->getBasicDoctrineConfiguration();
@@ -113,7 +114,7 @@ class SchemaCreateCommandTest extends AbstractDatabaseMappingTest
             $registryManagers
         );
 
-        $command = new SchemaCreateCommand($registry);
+        $command = new SchemaUpdateCommand($registry);
         $command->setLaravel($this->container);
         $input = new ArrayInput(['--sql' => null, '--em' => 'sqlite']);
         $output = new BufferedOutput();
@@ -125,7 +126,7 @@ class SchemaCreateCommandTest extends AbstractDatabaseMappingTest
             $output->fetch()
         );
 
-        $command = new SchemaCreateCommand($registry);
+        $command = new SchemaUpdateCommand($registry);
         $command->setLaravel($this->container);
         $input = new ArrayInput(['--em' => 'sqlite']);
         $command->run($input, $output);
