@@ -17,6 +17,8 @@
         "doctrine/migrations": "1.*"
     },
 	"require-dev": {
+        "illuminate/container": "4.*|5.*",
+        "illuminate/console": "4.*|5.*",
 		"mockery/mockery": "dev-master",
 		"phpunit/phpunit": "3.7.*"
 	},

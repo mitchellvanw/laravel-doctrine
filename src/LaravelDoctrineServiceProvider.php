@@ -1,6 +1,7 @@
 <?php namespace Mitch\LaravelDoctrine;
 
-use App;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\EntityManager;
@@ -38,6 +39,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     {
         $this->registerConfigurationMapper();
         $this->registerCacheManager();
+        $this->registerManagerRegistry();
         $this->registerEntityManager();
         $this->registerClassMetadataFactory();
 
@@ -76,30 +78,146 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         });
     }
 
+    private function createMetadataConfiguration(
+        array $paths,
+        $isDevMode = false,
+        $proxyDir = null,
+        \Doctrine\Common\Cache\Cache $cache = null,
+        $useSimpleAnnotationReader = true,
+        $autoGenerateProxyClasses = false,
+        $proxyNamespace = null,
+        $repository = 'Doctrine\ORM\EntityRepository',
+        $logger = null
+    ) {
+        $metadata = Setup::createAnnotationMetadataConfiguration(
+            $paths,
+            $isDevMode,
+            $proxyDir,
+            $cache,
+            $useSimpleAnnotationReader
+        );
+
+        $metadata->addFilter('trashed', TrashedFilter::class);
+        $metadata->setAutoGenerateProxyClasses($autoGenerateProxyClasses);
+        if ($proxyNamespace) {
+            $metadata->setProxyNamespace($config['proxy']['namespace']);
+        }
+        $metadata->setDefaultRepositoryClassName($repository);
+        $metadata->setSQLLogger($logger);
+
+        return $metadata;
+    }
+
+    private function mapEntityManagers($config, $defaultDatabase)
+    {
+        if (!isset($config['default_connection'])) {
+            $config['default_connection'] = $defaultDatabase;
+        }
+
+        if (!isset($config['entity_managers'])) {
+            $config['entity_managers'] = [
+                $defaultDatabase => [
+                    'metadata' => $config['metadata']
+                ]
+            ];
+        }
+
+        return $config;
+    }
+
+    private function createManagerInstances($config, $databaseConnections, $debug, CacheManager $cacheManager)
+    {
+        $registryConnections = [];
+        $registryManagers = [];
+
+        $proxyNamespace = isset($config['proxy']['namespace']) ? $config['proxy']['namespace'] : null;
+
+        $eventManager = new EventManager;
+        $eventManager->addEventListener(Events::onFlush, new SoftDeletableListener);
+
+        foreach ($config['entity_managers'] as $name => $managerConfig) {
+            $connectionName = isset($managerConfig['connection']) ? $managerConfig['connection'] : $name;
+
+            // skip connection names not defined in Laravel's database configuration
+            if (!isset($databaseConnections[$connectionName])) {
+                continue;
+            }
+
+            $databaseConfig = $databaseConnections[$connectionName];
+            $cacheProvider = isset($managerConfig['cache_provider']) ? $managerConfig['cache_provider'] : $config['cache_provider'];
+            $repository = isset($managerConfig['repository']) ? $managerConfig['repository'] : $config['repository'];
+            $simpleAnnotations = isset($managerConfig['simple_annotations']) ? $managerConfig['simple_annotations'] : $config['simple_annotations'];
+            $logger = isset($managerConfig['logger']) ? $managerConfig['logger'] : $config['logger'];
+
+            $metadata = $this->createMetadataConfiguration(
+                $managerConfig['metadata'],
+                $debug,
+                $config['proxy']['directory'],
+                $cacheManager->getCache($cacheProvider),
+                $simpleAnnotations,
+                $config['proxy']['auto_generate'],
+                $proxyNamespace,
+                $repository,
+                $logger
+            );
+
+            $connection = DriverManager::getConnection(
+                $this->mapLaravelToDoctrineConfig($databaseConfig),
+                $metadata,
+                $eventManager
+            );
+
+            $registryConnections[$connectionName] = "doctrine.dbal.{$connectionName}_connection";
+
+            $entityManager = EntityManager::create($connection, $metadata, $eventManager);
+            $entityManager->getFilters()->enable('trashed');
+            $registryManagers[$name] = "doctrine.orm.{$name}_entity_manager";
+
+            $this->app->instance($registryConnections[$connectionName], $connection);
+            $this->app->instance($registryManagers[$name], $entityManager);
+
+            if ($connectionName === $config['default_connection']) {
+                $registryConnections['default'] = 'doctrine.dbal.default_connection';
+                $registryManagers['default'] = 'doctrine.orm.default_entity_manager';
+
+                $this->app->instance('doctrine.dbal.default_connection', $connection);
+                $this->app->instance('doctrine.orm.default_entity_manager', $entityManager);
+            }
+
+        }
+
+        return [$registryConnections, $registryManagers];
+    }
+
+    private function registerManagerRegistry()
+    {
+        $this->app->singleton(IlluminateRegistry::class, function ($app) {
+            $config = $app['config']['doctrine::doctrine'];
+            $databaseConnections = $app['config']['database']['connections'];
+            $defaultDatabase = $app['config']['database']['default'];
+
+            $config = $this->mapEntityManagers($config, $defaultDatabase);
+
+            list($registryConnections, $registryManagers) = $this->createManagerInstances(
+                $config,
+                $databaseConnections,
+                $app['config']['app.debug'],
+                $app[CacheManager::class]
+            );
+
+            return new IlluminateRegistry(
+                $app,
+                $registryConnections,
+                $registryManagers
+            );
+        });
+        $this->app->singleton(ManagerRegistry::class, IlluminateRegistry::class);
+    }
+
     private function registerEntityManager()
     {
         $this->app->singleton(EntityManager::class, function ($app) {
-            $config = $app['config']['doctrine::doctrine'];
-            $metadata = Setup::createAnnotationMetadataConfiguration(
-                $config['metadata'],
-                $app['config']['app.debug'],
-                $config['proxy']['directory'],
-                $app[CacheManager::class]->getCache($config['cache_provider']),
-                $config['simple_annotations']
-            );
-            $metadata->addFilter('trashed', TrashedFilter::class);
-            $metadata->setAutoGenerateProxyClasses($config['proxy']['auto_generate']);
-            $metadata->setDefaultRepositoryClassName($config['repository']);
-            $metadata->setSQLLogger($config['logger']);
-
-            if (isset($config['proxy']['namespace']))
-                $metadata->setProxyNamespace($config['proxy']['namespace']);
-
-            $eventManager = new EventManager;
-            $eventManager->addEventListener(Events::onFlush, new SoftDeletableListener);
-            $entityManager = EntityManager::create($this->mapLaravelToDoctrineConfig($app['config']), $metadata, $eventManager);
-            $entityManager->getFilters()->enable('trashed');
-            return $entityManager;
+            return $app->make(IlluminateRegistry::class)->getManager();
         });
         $this->app->singleton(EntityManagerInterface::class, EntityManager::class);
     }
@@ -135,19 +253,19 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             ClassMetadataFactory::class,
             DriverMapper::class,
             AuthManager::class,
+            ManagerRegistry::class,
+            IlluminateRegistry::class,
         ];
     }
 
     /**
      * Map Laravel's to Doctrine's database configuration requirements.
-     * @param $config
+     * @param $databaseConfig
      * @throws \Exception
      * @return array
      */
-    private function mapLaravelToDoctrineConfig($config)
+    private function mapLaravelToDoctrineConfig($databaseConfig)
     {
-        $default = $config['database.default'];
-        $connection = $config["database.connections.{$default}"];
-        return App::make(DriverMapper::class)->map($connection);
+        return $this->app->make(DriverMapper::class)->map($databaseConfig);
     }
 }

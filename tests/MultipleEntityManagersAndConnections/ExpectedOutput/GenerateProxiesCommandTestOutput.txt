@@ -1,0 +1,4 @@
+Starting proxy generation....
+Processing entities:
+Tests\MultipleEntityManagersAndConnections\Models\User
+Proxies have been created.

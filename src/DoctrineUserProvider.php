@@ -1,6 +1,6 @@
 <?php namespace Mitch\LaravelDoctrine;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\UserProviderInterface;
@@ -13,7 +13,7 @@ class DoctrineUserProvider implements UserProviderInterface
      */
     private $hasher;
     /**
-     * @var EntityManager
+     * @var \Doctrine\ORM\EntityManager
      */
     private $entityManager;
     /**
@@ -23,13 +23,13 @@ class DoctrineUserProvider implements UserProviderInterface
 
     /**
      * @param HasherInterface $hasher
-     * @param EntityManager $entityManager
+     * @param ManagerRegistry $registry
      * @param $entity
      */
-    public function __construct(HasherInterface $hasher, EntityManager $entityManager, $entity)
+    public function __construct(HasherInterface $hasher, ManagerRegistry $registry, $entity)
     {
         $this->hasher = $hasher;
-        $this->entityManager = $entityManager;
+        $this->entityManager = $registry->getManager();
         $this->entity = $entity;
     }
     /**

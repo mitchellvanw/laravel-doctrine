@@ -1,7 +1,8 @@
 <?php  namespace Mitch\LaravelDoctrine\Console;
 
 use Illuminate\Console\Command;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Symfony\Component\Console\Input\InputOption;
 
 class GenerateProxiesCommand extends Command
 {
@@ -20,29 +21,36 @@ class GenerateProxiesCommand extends Command
     protected $description = 'Generate proxies for entities.';
 
     /**
-     * The Entity Manager
+     * The ManagerRegistry
      *
-     * @var \Doctrine\ORM\EntityManagerInterface
+     * @var \Doctrine\Common\Persistence\ManagerRegistry
      */
-    private $entityManager;
+    private $registry;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct();
 
-        $this->entityManager = $entityManager;
+        $this->registry = $registry;
     }
 
     public function fire()
     {
         $this->info('Starting proxy generation....');
-        $metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
+
+        if ($this->option('em')) {
+            $manager = $this->registry->getManager($this->option('em'));
+        } else {
+            $manager = $this->registry->getManager();
+        }
+
+        $metadata = $manager->getMetadataFactory()->getAllMetadata();
         if (empty($metadata)) {
             $this->error('No metadata found to generate any entities.');
             exit;
         }
-        $directory = $this->laravel['config']['doctrine::doctrine.proxy.directory'];
-        if ( ! $directory) {
+        $directory =  $manager->getConfiguration()->getProxyDir();
+        if (! $directory) {
             $this->error('The proxy directory has not been set.');
             exit;
         }
@@ -50,7 +58,14 @@ class GenerateProxiesCommand extends Command
         foreach ($metadata as $item) {
             $this->line($item->name);
         }
-        $this->entityManager->getProxyFactory()->generateProxyClasses($metadata, $directory);
+        $manager->getProxyFactory()->generateProxyClasses($metadata, $directory);
         $this->info('Proxies have been created.');
     }
-} 
+
+    protected function getOptions()
+    {
+        return [
+            ['em', false, InputOption::VALUE_REQUIRED, 'Sets the entity manager when the default is not desired.'],
+        ];
+    }
+}

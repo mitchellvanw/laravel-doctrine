@@ -1,8 +1,8 @@
-<?php namespace Mitch\LaravelDoctrine\Console; 
+<?php namespace Mitch\LaravelDoctrine\Console;
 
 use Illuminate\Console\Command;
 use Doctrine\ORM\Tools\SchemaTool;
-use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Input\InputOption;
 
 class SchemaUpdateCommand extends Command
@@ -29,18 +29,17 @@ class SchemaUpdateCommand extends Command
     private $tool;
 
     /**
-     * The class metadata factory
-     *
-     * @var \Doctrine\ORM\Tools\SchemaTool
-     */
-    private $metadata;
+      * The ManagerRegistry
+      *
+      * @var \Doctrine\Common\Persistence\ManagerRegistry
+      */
+    private $registry;
 
-    public function __construct(SchemaTool $tool, ClassMetadataFactory $metadata)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct();
 
-        $this->tool = $tool;
-        $this->metadata = $metadata;
+        $this->registry = $registry;
     }
 
     /**
@@ -52,17 +51,27 @@ class SchemaUpdateCommand extends Command
     {
         $this->info('Checking if database needs updating....');
         $clean = $this->option('clean');
-        $sql = $this->tool->getUpdateSchemaSql($this->metadata->getAllMetadata(), $clean);
+
+        if ($this->option('em')) {
+            $manager = $this->registry->getManager($this->option('em'));
+        } else {
+            $manager = $this->registry->getManager();
+        }
+
+        $tool = new SchemaTool($manager);
+
+        $sql = $tool->getUpdateSchemaSql($manager->getMetadataFactory()->getAllMetadata(), $clean);
+
         if (empty($sql)) {
             $this->info('No updates found.');
-            return;
+            exit;
         }
         if ($this->option('sql')) {
             $this->info('Outputting update query:');
             $this->info(implode(';' . PHP_EOL, $sql));
         } else {
             $this->info('Updating database schema....');
-            $this->tool->updateSchema($this->metadata->getAllMetadata());
+            $tool->updateSchema($manager->getMetadataFactory()->getAllMetadata());
             $this->info('Schema has been updated!');
         }
     }
@@ -71,8 +80,8 @@ class SchemaUpdateCommand extends Command
     {
         return [
             ['sql', false, InputOption::VALUE_NONE, 'Dumps SQL query and does not execute update.'],
-            ['clean', null, InputOption::VALUE_OPTIONAL, 'When using clean model all non-relevant to this metadata assets will be cleared.']
+            ['clean', null, InputOption::VALUE_OPTIONAL, 'When using clean model all non-relevant to this metadata assets will be cleared.'],
+            ['em', false, InputOption::VALUE_REQUIRED, 'Sets the entity manager when the default is not desired.'],
         ];
     }
 }
-

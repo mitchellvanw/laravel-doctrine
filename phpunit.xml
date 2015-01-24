@@ -14,5 +14,8 @@
         <testsuite name="all">
             <directory suffix="Test.php">./tests/</directory>
         </testsuite>
+        <testsuite name="multiple_configurations">
+            <directory suffix="Test.php">./tests/MultipleEntityManagersAndConnections/</directory>            
+        </testsuite>
     </testsuites>
 </phpunit>
