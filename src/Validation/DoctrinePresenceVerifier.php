@@ -1,13 +1,19 @@
 <?php
-
 namespace Mitch\LaravelDoctrine\Validation;
 
 use EntityManager;
 use Doctrine\ORM\Query\ResultSetMapping;
+use Doctrine\ORM\EntityManagerInterface;
 use Illuminate\Validation\PresenceVerifierInterface;
 
 class DoctrinePresenceVerifier implements PresenceVerifierInterface
 {
+	protected $entityManager;
+
+	public function __construct(EntityManagerInterface $entityManager)
+	{
+		$this->entityManager = $entityManager;
+	}
 	/**
 	 * Count the number of objects in a collection having the given value.
 	 *
@@ -82,6 +88,6 @@ class DoctrinePresenceVerifier implements PresenceVerifierInterface
 	{
 		$rsm = new ResultSetMapping();
 
-		return EntityManager::createNativeQuery(implode(' ', $queryParts), $rsm);
+		return $this->entityManager->createNativeQuery(implode(' ', $queryParts), $rsm);
 	}
 }

@@ -75,7 +75,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     {
         $this->app->bindShared('validation.presence', function()
         {
-            return new DoctrinePresenceVerifier;
+            return new DoctrinePresenceVerifier(EntityManagerInterface::class);
         });
     }
 
