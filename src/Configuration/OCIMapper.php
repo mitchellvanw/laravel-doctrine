@@ -3,7 +3,7 @@
 class OCIMapper implements Mapper
 {
 	/**
-	 * Creates the configuration mapping for SQL database engines, including SQL server, MySQL and PostgreSQL.
+	 * Creates the configuration mapping for Oracle databases
 	 *
 	 * @param array $configuration
 	 * @return array
@@ -21,6 +21,7 @@ class OCIMapper implements Mapper
 
 		return array_merge($defaults, [
 			'driver' => $this->driver($configuration['driver']),
+            'port' => @$configuration['port'] ? $configuration['port'] : 1521,
 			'host' => $configuration['host'],
 			'dbname' => $configuration['database'],
 			'user' => $configuration['username'],
@@ -30,25 +31,26 @@ class OCIMapper implements Mapper
 	}
 
 	/**
-	 * Is suitable for mapping configurations that use a mysql, postgres or sqlserv setup.
+	 * Is suitable for mapping configurations that use an oracle setup.
 	 *
 	 * @param array $configuration
 	 * @return boolean
 	 */
 	public function isAppropriateFor(array $configuration)
 	{
-		return in_array($configuration['driver'], ['oci8', 'pdo_oci']);
+		return in_array($configuration['driver'], ['oci8', 'pdo_oci', 'oracle']);
 	}
 
 	/**
 	 * Maps the Laravel driver syntax to an Sql doctrine format.
+     * oci8 and pdo_oci are available to but oracle will use oci8
 	 *
 	 * @param $l4Driver
 	 * @return string
 	 */
 	public function driver($l4Driver)
 	{
-		$doctrineDrivers = ['oci8' => 'oci8', 'pdo_oci' => 'pdo_oci'];
+		$doctrineDrivers = ['oci8' => 'oci8', 'pdo_oci' => 'pdo_oci', 'oracle' => 'oci8'];
 
 		return $doctrineDrivers[$l4Driver];
 	}

@@ -21,7 +21,7 @@ class OCIMapperTest extends \PHPUnit_Framework_TestCase
 	public function testMapping()
 	{
 		$configuration = [
-			'driver'   => 'oci8',
+			'driver'   => 'oracle',
 			'host'     => 'localhost',
 			'database' => 'db',
 			'username' => 'somedude',
@@ -34,6 +34,7 @@ class OCIMapperTest extends \PHPUnit_Framework_TestCase
 		$expected = [
 			'pooled'   => false,
 			'servicename' => 'SID',
+            'port' => 1521,
 			'driver'   => 'oci8',
 			'host'     => $configuration['host'],
 			'dbname'   => $configuration['database'],
