@@ -211,7 +211,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
                 $registryManagers
             );
         });
-        $this->app->singleton(ManagerRegistry::class, IlluminateRegistry::class);
+        $this->app->alias(IlluminateRegistry::class, ManagerRegistry::class);
     }
 
     private function registerEntityManager()
@@ -219,7 +219,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         $this->app->singleton(EntityManager::class, function ($app) {
             return $app->make(IlluminateRegistry::class)->getManager();
         });
-        $this->app->singleton(EntityManagerInterface::class, EntityManager::class);
+        $this->app->alias(EntityManager::class, EntityManagerInterface::class);
     }
 
     private function registerClassMetadataFactory()
@@ -238,24 +238,6 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
                 $app['config']['auth.model']
             );
         });
-    }
-
-    /**
-     * Get the services provided by the provider.
-     * @return array
-     */
-    public function provides()
-    {
-        return [
-            CacheManager::class,
-            EntityManagerInterface::class,
-            EntityManager::class,
-            ClassMetadataFactory::class,
-            DriverMapper::class,
-            AuthManager::class,
-            ManagerRegistry::class,
-            IlluminateRegistry::class,
-        ];
     }
 
     /**
