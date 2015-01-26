@@ -27,19 +27,19 @@ class OCIMapperTest extends \PHPUnit_Framework_TestCase
 			'username' => 'somedude',
 			'password' => 'not safe',
 			'prefix'   => 'mitch_',
-            'charset'  => 'whatevs',
-            'servicename' => 'SID'
+			'charset'  => 'whatevs',
+			'servicename' => 'SID'
 		];
 
 		$expected = [
-            'pooled'   => false,
-            'servicename' => 'SID',
+			'pooled'   => false,
+			'servicename' => 'SID',
 			'driver'   => 'oci8',
 			'host'     => $configuration['host'],
 			'dbname'   => $configuration['database'],
 			'user'     => $configuration['username'],
 			'password' => $configuration['password'],
-            'charset'  => $configuration['charset']
+			'charset'  => $configuration['charset']
 		];
 
 		$actual = $this->sqlMapper->map($configuration);
