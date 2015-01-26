@@ -103,7 +103,8 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             $entityManager->getFilters()->enable('trashed');
             return $entityManager;
         });
-        $this->app->singleton(EntityManagerInterface::class, EntityManager::class);
+
+        $this->app->alias(EntityManager::class, EntityManagerInterface::class);
     }
 
     private function registerClassMetadataFactory()
@@ -124,22 +125,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         });
     }
 
-    /**
-     * Get the services provided by the provider.
-     * @return array
-     */
-    public function provides()
-    {
-        return [
-            CacheManager::class,
-            EntityManagerInterface::class,
-            EntityManager::class,
-            ClassMetadataFactory::class,
-            DriverMapper::class,
-            AuthManager::class,
-        ];
-    }
-
+   
     /**
      * Map Laravel's to Doctrine's database configuration requirements.
      * @param $config
