@@ -13,6 +13,7 @@ use Mitch\LaravelDoctrine\Cache;
 use Mitch\LaravelDoctrine\Configuration\DriverMapper;
 use Mitch\LaravelDoctrine\Configuration\SqlMapper;
 use Mitch\LaravelDoctrine\Configuration\SqliteMapper;
+use Mitch\LaravelDoctrine\Configuration\OCIMapper;
 use Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener;
 use Mitch\LaravelDoctrine\Filters\TrashedFilter;
 use Mitch\LaravelDoctrine\Validation\DoctrinePresenceVerifier;
@@ -61,6 +62,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             $mapper = new DriverMapper;
             $mapper->registerMapper(new SqlMapper);
             $mapper->registerMapper(new SqliteMapper);
+            $mapper->registerMapper(new OCIMapper);
             return $mapper;
         });
     }

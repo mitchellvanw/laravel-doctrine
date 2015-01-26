@@ -30,9 +30,10 @@ class SqliteMapperTest extends \PHPUnit_Framework_TestCase
 			'prefix'   => 'mitch_',
 			'charset'  => 'whatevs'
 		];
+
 		$expected = [
 			'driver'   => 'pdo_sqlite',
-			'path'     => 'path/database/db.sqlite',
+			'path'     => $configuration['database'],
 			'user'     => $configuration['username'],
             'password' => null
 		];
