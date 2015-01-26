@@ -3,8 +3,8 @@
 use Doctrine\ORM\Mapping AS ORM;
 use DateTime;
 
-trait Timestamps
-{
+trait Timestamps {
+
     /**
      * @ORM\Column(name="created_at", type="datetime", nullable=false)
      * @var \DateTime
@@ -20,9 +20,8 @@ trait Timestamps
     /**
      * @ORM\PrePersist
      */
-    public function prePersist()
-    {
-	    $now = new Datetime;
+    public function prePersist() {
+        $now = new Datetime;
         $this->createdAt = $now;
         $this->updatedAt = $now;
     }
@@ -30,28 +29,23 @@ trait Timestamps
     /**
      * @ORM\PreUpdate
      */
-    public function preUpdate()
-    {
+    public function preUpdate() {
         $this->updatedAt = new DateTime;
     }
 
-    public function getCreatedAt()
-    {
+    public function getCreatedAt() {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(DateTime $createdAt)
-    {
+    public function setCreatedAt(DateTime $createdAt) {
         $this->createdAt = $createdAt;
     }
 
-    public function getUpdatedAt()
-    {
+    public function getUpdatedAt() {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(DateTime $updatedAt)
-    {
+    public function setUpdatedAt(DateTime $updatedAt) {
         $this->updatedAt = $updatedAt;
     }
 }

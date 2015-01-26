@@ -1,7 +1,6 @@
 {
     "name": "mitchellvanw/laravel-doctrine",
-    "description": "The Doctrine 2 implementation that melts with Laravel 4",
-    "version": "0.5.0",
+    "description": "The Doctrine 2 implementation that melts with Laravel",
     "keywords": ["doctrine", "doctrine 2", "orm", "laravel"],
     "license": "MIT",
     "authors": [
@@ -11,8 +10,8 @@
         }
     ],
     "require": {
-        "php": ">=5.5.0",
-        "illuminate/support": "4.*|5.*",
+        "php": ">=5.4.0",
+        "illuminate/support": "~5.0",
         "doctrine/orm": "2.5.*",
         "doctrine/migrations": "1.*"
     },
