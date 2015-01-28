@@ -17,6 +17,7 @@ use Mitch\LaravelDoctrine\Configuration\OCIMapper;
 use Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener;
 use Mitch\LaravelDoctrine\EventListeners\TablePrefix;
 use Mitch\LaravelDoctrine\Filters\TrashedFilter;
+use Mitch\LaravelDoctrine\Validation\DoctrinePresenceVerifier;
 
 class LaravelDoctrineServiceProvider extends ServiceProvider
 {
@@ -42,6 +43,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         $this->registerCacheManager();
         $this->registerEntityManager();
         $this->registerClassMetadataFactory();
+        $this->registerValidationVerifier();
 
         $this->commands([
             'Mitch\LaravelDoctrine\Console\GenerateProxiesCommand',
@@ -63,6 +65,18 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             $mapper->registerMapper(new SqliteMapper);
             $mapper->registerMapper(new OCIMapper);
             return $mapper;
+        });
+    }
+
+    /**
+     * Registers a new presence verifier for Laravel 4 validation. Specifically, this
+     * is for the use of the Doctrine ORM.
+     */
+    public function registerValidationVerifier()
+    {
+        $this->app->bindShared('validation.presence', function()
+        {
+            return new DoctrinePresenceVerifier(EntityManagerInterface::class);
         });
     }
 
@@ -114,7 +128,8 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             $entityManager->getFilters()->enable('trashed');
             return $entityManager;
         });
-        $this->app->singleton(EntityManagerInterface::class, EntityManager::class);
+
+        $this->app->alias(EntityManager::class, EntityManagerInterface::class);
     }
 
     private function registerClassMetadataFactory()
@@ -135,22 +150,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         });
     }
 
-    /**
-     * Get the services provided by the provider.
-     * @return array
-     */
-    public function provides()
-    {
-        return [
-            CacheManager::class,
-            EntityManagerInterface::class,
-            EntityManager::class,
-            ClassMetadataFactory::class,
-            DriverMapper::class,
-            AuthManager::class,
-        ];
-    }
-
+   
     /**
      * Map Laravel's to Doctrine's database configuration requirements.
      * @param $config
