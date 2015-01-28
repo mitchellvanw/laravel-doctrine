@@ -16,6 +16,7 @@ use Mitch\LaravelDoctrine\Configuration\SqliteMapper;
 use Mitch\LaravelDoctrine\Configuration\OCIMapper;
 use Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener;
 use Mitch\LaravelDoctrine\Filters\TrashedFilter;
+use Mitch\LaravelDoctrine\Validation\DoctrinePresenceVerifier;
 
 class LaravelDoctrineServiceProvider extends ServiceProvider
 {
@@ -41,6 +42,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         $this->registerCacheManager();
         $this->registerEntityManager();
         $this->registerClassMetadataFactory();
+        $this->registerValidationVerifier();
 
         $this->commands([
             'Mitch\LaravelDoctrine\Console\GenerateProxiesCommand',
@@ -62,6 +64,18 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             $mapper->registerMapper(new SqliteMapper);
             $mapper->registerMapper(new OCIMapper);
             return $mapper;
+        });
+    }
+
+    /**
+     * Registers a new presence verifier for Laravel 4 validation. Specifically, this
+     * is for the use of the Doctrine ORM.
+     */
+    public function registerValidationVerifier()
+    {
+        $this->app->bindShared('validation.presence', function()
+        {
+            return new DoctrinePresenceVerifier(EntityManagerInterface::class);
         });
     }
 
