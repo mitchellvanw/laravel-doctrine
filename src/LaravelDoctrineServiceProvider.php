@@ -10,6 +10,7 @@ use Doctrine\Common\EventManager;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Support\ServiceProvider;
 use Mitch\LaravelDoctrine\Cache;
+use Mitch\LaravelDoctrine\Configuration\ConfigurationFactory;
 use Mitch\LaravelDoctrine\Configuration\DriverMapper;
 use Mitch\LaravelDoctrine\Configuration\SqlMapper;
 use Mitch\LaravelDoctrine\Configuration\SqliteMapper;
@@ -96,24 +97,23 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     {
         $this->app->singleton(EntityManager::class, function ($app) {
             $config = $app['config']['doctrine::doctrine'];
-            $metadata = Setup::createAnnotationMetadataConfiguration(
-                $config['metadata'],
-                $app['config']['app.debug'],
-                $config['proxy']['directory'],
-                $app[CacheManager::class]->getCache($config['cache_provider']),
-                $config['simple_annotations']
-            );
-            $metadata->addFilter('trashed', TrashedFilter::class);
-            $metadata->setAutoGenerateProxyClasses($config['proxy']['auto_generate']);
-            $metadata->setDefaultRepositoryClassName($config['repository']);
-            $metadata->setSQLLogger($config['logger']);
+
+            /** @type ConfigurationFactory $configurationFactory */
+            $configurationFactory = $app->make(ConfigurationFactory::class);
+
+            $configuration = $configurationFactory->create();
+
+            $configuration->addFilter('trashed', TrashedFilter::class);
+            $configuration->setAutoGenerateProxyClasses($config['proxy']['auto_generate']);
+            $configuration->setDefaultRepositoryClassName($config['repository']);
+            $configuration->setSQLLogger($config['logger']);
 
             if (isset($config['proxy']['namespace']))
-                $metadata->setProxyNamespace($config['proxy']['namespace']);
+                $configuration->setProxyNamespace($config['proxy']['namespace']);
 
             $eventManager = new EventManager;
             $eventManager->addEventListener(Events::onFlush, new SoftDeletableListener);
-            $entityManager = EntityManager::create($this->mapLaravelToDoctrineConfig($app['config']), $metadata, $eventManager);
+            $entityManager = EntityManager::create($this->mapLaravelToDoctrineConfig($app['config']), $configuration, $eventManager);
             $entityManager->getFilters()->enable('trashed');
             return $entityManager;
         });
