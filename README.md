@@ -53,7 +53,8 @@ Next use Composer to update your project from the the Terminal:
 php composer.phar update
 ```
 
-Once the package has been installed you'll need to add the service provider. Open your `app/config/app.php` configuration file, and add a new item to the `providers` array.
+Once the package has been installed you'll need to add the service provider. Open your `app/config/app.php` configuration file, and add a 
+new item to the `providers` array.
 
 ```php
 'Mitch\LaravelDoctrine\LaravelDoctrineServiceProvider'
@@ -65,11 +66,8 @@ After This you'll need to add the facade. Open your `app/config/app.php` configu
 'EntityManager' => 'Mitch\LaravelDoctrine\EntityManagerFacade'
 ```
 
-It's recommended to publish the package configuration.
+And last but not least, make sure you copy the configuration file from the package into your config folder.
 
-```php
-php artisan publish:config mitchellvanw/laravel-doctrine --path=vendor/mitchellvanw/laravel-doctrine/config
-```
 
 ## 2 Minutes
 
