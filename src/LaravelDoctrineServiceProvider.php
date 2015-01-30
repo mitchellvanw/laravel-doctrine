@@ -1,6 +1,7 @@
 <?php namespace Mitch\LaravelDoctrine;
 
 use App;
+use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\EntityManager;
@@ -113,6 +114,33 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 
             $eventManager = new EventManager;
             $eventManager->addEventListener(Events::onFlush, new SoftDeletableListener);
+
+            /**
+             * Adapted from ZF2 Doctrine 2 module
+             */
+            if (isset($config['events']['subscribers'])) {
+                $subscribers = $config['events']['subscribers'];
+                foreach ($subscribers as $subscriberName) {
+
+                    $subscriber = new $subscriberName;
+
+                    if ($subscriber instanceof EventSubscriber) {
+                        $eventManager->addEventSubscriber($subscriber);
+                        continue;
+                    }
+                }
+            }
+
+            /**
+             * Registering custom annotation drivers
+             */
+            if (isset($config['annotations']['drivers'])) {
+                $drivers = $config['annotations']['drivers'];
+                foreach ($drivers as $driverData) {
+                    call_user_func( array( $driverData['class'], $driverData['method'] ) );
+                }
+            }
+
             $entityManager = EntityManager::create($this->mapLaravelToDoctrineConfig($app['config']), $metadata, $eventManager);
             $entityManager->getFilters()->enable('trashed');
             return $entityManager;

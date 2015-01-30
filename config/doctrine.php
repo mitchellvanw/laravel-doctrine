@@ -32,5 +32,27 @@ return [
 
     'repositoryFactory' => null,
 
-    'logger' => null
+    'logger' => null,
+
+    // Add here the classes with your Doctrine event listeners
+    'events' => [
+        'subscribers' => [
+            'Gedmo\Tree\TreeListener',
+            'Gedmo\Timestampable\TimestampableListener',
+            'Gedmo\Sluggable\SluggableListener',
+            'Gedmo\Loggable\LoggableListener',
+            'Gedmo\Sortable\SortableListener',
+            'Gedmo\Translatable\TranslatableListener',
+        ],
+    ],
+
+    // Add the annotation drivers
+    'annotations' => [
+        'drivers' => [
+            [
+                'class' => '\Gedmo\DoctrineExtensions',
+                'method' => 'registerAnnotations',
+            ],
+        ],
+    ],
 ];
