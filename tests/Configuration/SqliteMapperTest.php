@@ -23,6 +23,7 @@ class SqliteMapperTest extends \PHPUnit_Framework_TestCase
 	public function testMapping()
 	{
 		Facade::setFacadeApplication(new ApplicationStub);
+
 		$configuration = [
 			'driver'   => 'sqlite',
 			'database' => 'db',
@@ -30,14 +31,16 @@ class SqliteMapperTest extends \PHPUnit_Framework_TestCase
 			'prefix'   => 'mitch_',
 			'charset'  => 'whatevs'
 		];
-
+		
 		$expected = [
 			'driver'   => 'pdo_sqlite',
 			'path'     => $configuration['database'],
 			'user'     => $configuration['username'],
             'password' => null
 		];
+
 		$actual = $this->sqlMapper->map($configuration);
+
 		$this->assertEquals($expected, $actual);
 	}
 }
