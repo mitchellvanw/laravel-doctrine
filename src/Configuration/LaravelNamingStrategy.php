@@ -73,7 +73,14 @@ class LaravelNamingStrategy implements NamingStrategy
 	 */
 	public function joinTableName($sourceEntity, $targetEntity, $propertyName = null)
 	{
-		return $this->classToFieldName($sourceEntity) . '_' . $this->classToFieldName($targetEntity);
+		$names = [
+			$this->classToFieldName($sourceEntity),
+			$this->classToFieldName($targetEntity)
+		];
+
+		sort($names);
+
+		return implode('_', $names);
 	}
 
 	/**
@@ -103,7 +110,7 @@ class LaravelNamingStrategy implements NamingStrategy
 	 *
 	 * @return string
 	 */
-	function embeddedFieldToColumnName($propertyName, $embeddedColumnName, $className = null, $embeddedClassName = null)
+	public function embeddedFieldToColumnName($propertyName, $embeddedColumnName, $className = null, $embeddedClassName = null)
 	{
 		return $propertyName.'_'.$embeddedColumnName;
 	}
