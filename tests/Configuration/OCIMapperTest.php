@@ -40,7 +40,8 @@ class OCIMapperTest extends \PHPUnit_Framework_TestCase
 			'dbname'   => $configuration['database'],
 			'user'     => $configuration['username'],
 			'password' => $configuration['password'],
-			'charset'  => $configuration['charset']
+            'charset'  => $configuration['charset'],
+            'prefix'   => $configuration['prefix']
 		];
 
 		$actual = $this->sqlMapper->map($configuration);

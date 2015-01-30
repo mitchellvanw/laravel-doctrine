@@ -26,7 +26,8 @@ class OCIMapper implements Mapper
 			'dbname' => $configuration['database'],
 			'user' => $configuration['username'],
 			'password' => $configuration['password'],
-			'charset' => $configuration['charset']
+            'charset' => $configuration['charset'],
+            'prefix' => @$configuration['prefix'] ? $configuration['prefix'] : null
 		]);
 	}
 
