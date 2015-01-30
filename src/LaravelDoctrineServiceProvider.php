@@ -15,6 +15,7 @@ use Mitch\LaravelDoctrine\Configuration\SqlMapper;
 use Mitch\LaravelDoctrine\Configuration\SqliteMapper;
 use Mitch\LaravelDoctrine\Configuration\OCIMapper;
 use Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener;
+use Mitch\LaravelDoctrine\EventListeners\TablePrefix;
 use Mitch\LaravelDoctrine\Filters\TrashedFilter;
 use Mitch\LaravelDoctrine\Validation\DoctrinePresenceVerifier;
 
@@ -112,8 +113,18 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
                 $metadata->setProxyNamespace($config['proxy']['namespace']);
 
             $eventManager = new EventManager;
+
+            $connection_config = $this->mapLaravelToDoctrineConfig($app['config']);
+
+            //load prefix listener
+            if(isset($connection_config['prefix'])) {
+                $tablePrefix = new TablePrefix($connection_config['prefix']);
+                $eventManager->addEventListener(Events::loadClassMetadata, $tablePrefix);
+            }
+
             $eventManager->addEventListener(Events::onFlush, new SoftDeletableListener);
-            $entityManager = EntityManager::create($this->mapLaravelToDoctrineConfig($app['config']), $metadata, $eventManager);
+
+            $entityManager = EntityManager::create($connection_config, $metadata, $eventManager);
             $entityManager->getFilters()->enable('trashed');
             return $entityManager;
         });

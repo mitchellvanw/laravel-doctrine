@@ -35,7 +35,8 @@ class SqliteMapperTest extends \PHPUnit_Framework_TestCase
 			'driver'   => 'pdo_sqlite',
 			'path'     => $configuration['database'],
 			'user'     => $configuration['username'],
-            'password' => null
+            'password' => null,
+            'prefix'   => $configuration['prefix']
 		];
 		$actual = $this->sqlMapper->map($configuration);
 		$this->assertEquals($expected, $actual);
