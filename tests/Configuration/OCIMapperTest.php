@@ -1,44 +1,50 @@
 <?php namespace Tests\Configuration;
 
-use Mitch\LaravelDoctrine\Configuration\SqlMapper;
+use Mitch\LaravelDoctrine\Configuration\OCIMapper;
 use Mockery as m;
 
-class SqlMapperTest extends \PHPUnit_Framework_TestCase
+class OCIMapperTest extends \PHPUnit_Framework_TestCase
 {
 	private $sqlMapper;
 
 	public function setUp()
 	{
-		$this->sqlMapper = new SqlMapper;
+		$this->sqlMapper = new OCIMapper;
 	}
 
 	public function testAppropriation()
 	{
-		$this->assertTrue($this->sqlMapper->isAppropriateFor(['driver' => 'mysql']));
-		$this->assertTrue($this->sqlMapper->isAppropriateFor(['driver' => 'pgsql']));
-		$this->assertTrue($this->sqlMapper->isAppropriateFor(['driver' => 'sqlsrv']));
+		$this->assertTrue($this->sqlMapper->isAppropriateFor(['driver' => 'oci8']));
+		$this->assertTrue($this->sqlMapper->isAppropriateFor(['driver' => 'pdo_oci']));
 	}
 
 	public function testMapping()
 	{
 		$configuration = [
-			'driver'   => 'mysql',
+			'driver'   => 'oracle',
 			'host'     => 'localhost',
 			'database' => 'db',
 			'username' => 'somedude',
 			'password' => 'not safe',
 			'prefix'   => 'mitch_',
-			'charset'  => 'whatevs'
+			'charset'  => 'whatevs',
+			'servicename' => 'SID'
 		];
+
 		$expected = [
-			'driver'   => 'pdo_mysql',
+			'pooled'   => false,
+			'servicename' => 'SID',
+            'port' => 1521,
+			'driver'   => 'oci8',
 			'host'     => $configuration['host'],
 			'dbname'   => $configuration['database'],
 			'user'     => $configuration['username'],
 			'password' => $configuration['password'],
 			'charset'  => $configuration['charset']
 		];
+
 		$actual = $this->sqlMapper->map($configuration);
+
 		$this->assertEquals($expected, $actual);
 	}
 }

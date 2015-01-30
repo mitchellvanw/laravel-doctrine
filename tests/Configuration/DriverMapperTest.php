@@ -15,8 +15,8 @@ class DriverMapperTest extends \PHPUnit_Framework_TestCase
 		$driverMapper->registerMapper($mockMapper1);
 		$driverMapper->registerMapper($mockMapper2);
 
-		$mockMapper1->shouldReceive('appropriate')->once()->andReturn(false);
-		$mockMapper2->shouldReceive('appropriate')->once()->andReturn(true);
+		$mockMapper1->shouldReceive('isAppropriateFor')->once()->andReturn(false);
+		$mockMapper2->shouldReceive('isAppropriateFor')->once()->andReturn(true);
 		$mockMapper2->shouldReceive('map')->once()->andReturn('mapped array');
 
 		$this->assertEquals('mapped array', $driverMapper->map([]));
