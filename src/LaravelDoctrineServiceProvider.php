@@ -17,6 +17,7 @@ use Mitch\LaravelDoctrine\Configuration\OCIMapper;
 use Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener;
 use Mitch\LaravelDoctrine\EventListeners\TablePrefix;
 use Mitch\LaravelDoctrine\Filters\TrashedFilter;
+use Mitch\LaravelDoctrine\Migrations\DoctrineMigrationRepository;
 use Mitch\LaravelDoctrine\Reminders\DoctrineReminderRepository;
 use Mitch\LaravelDoctrine\Validation\DoctrinePresenceVerifier;
 
@@ -162,7 +163,17 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     private function extendMigrator()
     {
         $this->app->bindShared('migration.repository', function($app) {
-            return $app->make('Mitch\LaravelDoctrine\Migrations\DoctrineMigrationRepository');
+            return new DoctrineMigrationRepository(
+                function() use($app) {
+                    return $app->make('Doctrine\ORM\EntityManagerInterface');
+                },
+                function() use($app) {
+                    return $app->make('Doctrine\ORM\Tools\SchemaTool');
+                },
+                function() use($app) {
+                    return $app->make('Doctrine\ORM\Mapping\ClassMetadataFactory');
+                }
+            );
         });
     }
 

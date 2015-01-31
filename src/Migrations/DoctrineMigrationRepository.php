@@ -1,9 +1,6 @@
 <?php namespace Mitch\LaravelDoctrine\Migrations;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Tools\SchemaTool;
 use Exception;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 
@@ -19,15 +16,15 @@ class DoctrineMigrationRepository implements MigrationRepositoryInterface {
     /**
      * Create a new database migration repository instance.
      *
-     * @param \Doctrine\ORM\EntityManagerInterface       $entities
-     * @param \Doctrine\ORM\Tools\SchemaTool             $schema
-     * @param \Doctrine\ORM\Mapping\ClassMetadataFactory $metadata
+     * @param callable $entitiesCallback
+     * @param callable $schemaCallback
+     * @param callable $metadataCallback
      */
-    public function __construct(EntityManagerInterface $entities, SchemaTool $schema, ClassMetadataFactory $metadata)
+    public function __construct(callable $entitiesCallback, callable $schemaCallback, callable $metadataCallback)
     {
-        $this->entities = $entities;
-        $this->schema = $schema;
-        $this->metadata = $metadata;
+        $this->entitiesCallback = $entitiesCallback;
+        $this->schemaCallback = $schemaCallback;
+        $this->metadataCallback = $metadataCallback;
     }
     /**
      * Get the ran migrations.
@@ -36,7 +33,7 @@ class DoctrineMigrationRepository implements MigrationRepositoryInterface {
      */
     public function getRan()
     {
-        $migrations = $this->entities->createQueryBuilder()
+        $migrations = $this->getEntities()->createQueryBuilder()
             ->select('o.migration')
             ->from('Mitch\LaravelDoctrine\Migrations\Migration', 'o')
             ->getQuery()->getResult();
@@ -72,8 +69,8 @@ class DoctrineMigrationRepository implements MigrationRepositoryInterface {
     public function log($file, $batch)
     {
         $migration = new Migration($file, $batch);
-        $this->entities->persist($migration);
-        $this->entities->flush();
+        $this->getEntities()->persist($migration);
+        $this->getEntities()->flush();
     }
     /**
      * Remove a migration from the log.
@@ -83,7 +80,7 @@ class DoctrineMigrationRepository implements MigrationRepositoryInterface {
      */
     public function delete($migration)
     {
-        $this->entities->createQueryBuilder()
+        $this->getEntities()->createQueryBuilder()
             ->delete('Mitch\LaravelDoctrine\Migrations\Migration', 'o')
             ->andWhere('o.migration = :migration')
             ->setParameter('migration', $migration->migration)
@@ -106,7 +103,7 @@ class DoctrineMigrationRepository implements MigrationRepositoryInterface {
      */
     public function getLastBatchNumber()
     {
-        $result = $this->entities->createQueryBuilder()
+        $result = $this->getEntities()->createQueryBuilder()
             ->select('o, MAX(o.batch) as max_batch')
             ->from('Mitch\LaravelDoctrine\Migrations\Migration', 'o')
             ->getQuery()->getResult()[0]['max_batch'];
@@ -120,7 +117,7 @@ class DoctrineMigrationRepository implements MigrationRepositoryInterface {
      */
     public function createRepository()
     {
-        $this->schema->updateSchema($this->metadata->getAllMetadata());
+        $this->getSchema()->updateSchema($this->getMetadata()->getAllMetadata());
     }
     /**
      * Determine if the migration repository exists.
@@ -129,7 +126,7 @@ class DoctrineMigrationRepository implements MigrationRepositoryInterface {
      */
     public function repositoryExists()
     {
-        $schema = $this->entities->getConnection()->getSchemaManager();
+        $schema = $this->getEntities()->getConnection()->getSchemaManager();
         $tables = array_filter($schema->listTables(), function($value) {
             return $value->getName() === 'migrations';
         });
@@ -143,7 +140,7 @@ class DoctrineMigrationRepository implements MigrationRepositoryInterface {
      */
     protected function query()
     {
-        return $this->entities->createQueryBuilder()
+        return $this->getEntities()->createQueryBuilder()
               ->select('o')
               ->from('Mitch\LaravelDoctrine\Migrations\Migration', 'o');
     }
@@ -157,6 +154,30 @@ class DoctrineMigrationRepository implements MigrationRepositoryInterface {
      */
     public function setSource($name) {
         // not implemented
+    }
+
+    protected function getEntities() {
+        if($this->entities == null) {
+            $callable = $this->entitiesCallback;
+            $this->entities = $callable();
+        }
+        return $this->entities;
+    }
+
+    protected function getSchemaTool() {
+        if($this->schema == null) {
+            $callable = $this->schemaCallback;
+            $this->schema = $callable();
+        }
+        return $this->schema;
+    }
+
+    protected function getMetadata() {
+        if($this->metadata == null) {
+            $callable = $this->metadataCallback;
+            $this->metadata = $callable();
+        }
+        return $this->metadata;
     }
 
 }
