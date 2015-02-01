@@ -108,6 +108,8 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             $metadata->setAutoGenerateProxyClasses($config['proxy']['auto_generate']);
             $metadata->setDefaultRepositoryClassName($config['repository']);
             $metadata->setSQLLogger($config['logger']);
+            if (isset($config['resolver']))
+                $metadata->setEntityListenerResolver($config['resolver']);
 
             if (isset($config['proxy']['namespace']))
                 $metadata->setProxyNamespace($config['proxy']['namespace']);

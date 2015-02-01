@@ -32,5 +32,7 @@ return [
 
     'repositoryFactory' => null,
 
-    'logger' => null
+    'logger' => null,
+
+    'resolver' => null
 ];
