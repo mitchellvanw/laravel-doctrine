@@ -53,6 +53,7 @@ class DoctrineUserProvider implements UserProvider
     public function retrieveByToken($identifier, $token)
     {
         $entity = $this->getEntity();
+
         return $this->getRepository()->findOneBy([
             $entity->getKeyName() => $identifier,
             $entity->getRememberTokenName() => $token
@@ -82,9 +83,11 @@ class DoctrineUserProvider implements UserProvider
     public function retrieveByCredentials(array $credentials)
     {
         $criteria = [];
-        foreach ($credentials as $key => $value)
-            if ( ! str_contains($key, 'password'))
+        foreach ($credentials as $key => $value) {
+            if ( ! str_contains($key, 'password')) {
                 $criteria[$key] = $value;
+            }
+        }
 
         return $this->getRepository()->findOneBy($criteria);
     }
