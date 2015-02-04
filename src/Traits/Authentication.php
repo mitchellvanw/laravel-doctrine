@@ -63,6 +63,6 @@ trait Authentication {
      * @return string
      */
     public function getRememberTokenName() {
-        return 'remember_token';
+        return 'rememberToken';
     }
 } 
