@@ -8,9 +8,9 @@ return [
     ],
 
     'proxy' => [
-        'auto_generate' => false,
-        'directory'     => null,
-        'namespace'     => null
+        'auto_generate' => true,
+        'directory'     => 'Proxies',
+        'namespace'     => 'Proxy'
     ],
 
     // Available: null, apc, xcache, redis, memcache
