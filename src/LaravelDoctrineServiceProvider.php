@@ -70,8 +70,8 @@ class LaravelDoctrineServiceProvider extends ServiceProvider {
      * is for the use of the Doctrine ORM.
      */
     public function registerValidationVerifier() {
-        $this->app->bindShared('validation.presence', function () {
-            return new DoctrinePresenceVerifier(EntityManagerInterface::class);
+        $this->app->bindShared('validation.presence', function ($app) {
+            return new DoctrinePresenceVerifier($app->make('Doctrine\ORM\EntityManagerInterface'));
         });
     }
 
@@ -137,7 +137,6 @@ class LaravelDoctrineServiceProvider extends ServiceProvider {
             );
         });
     }
-
 
     /**
      * Map Laravel's to Doctrine's database configuration requirements.
