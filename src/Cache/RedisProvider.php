@@ -3,10 +3,9 @@
 use Doctrine\Common\Cache\RedisCache;
 use Redis;
 
-class RedisProvider implements Provider
-{
-    public function make($config = null)
-    {
+class RedisProvider implements Provider {
+
+    public function make($config = null) {
         if ( ! extension_loaded('redis'))
             throw new \RuntimeException('Redis extension was not loaded.');
 
@@ -20,8 +19,7 @@ class RedisProvider implements Provider
         return $cache;
     }
 
-    public function isAppropriate($provider)
-    {
+    public function isAppropriate($provider) {
         return $provider == 'redis';
     }
 }
