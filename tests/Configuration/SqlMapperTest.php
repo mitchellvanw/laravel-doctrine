@@ -14,9 +14,9 @@ class SqlMapperTest extends \PHPUnit_Framework_TestCase
 
 	public function testAppropriation()
 	{
-		$this->assertTrue($this->sqlMapper->isAppropriate(['driver' => 'mysql']));
-		$this->assertTrue($this->sqlMapper->isAppropriate(['driver' => 'pgsql']));
-		$this->assertTrue($this->sqlMapper->isAppropriate(['driver' => 'sqlsrv']));
+		$this->assertTrue($this->sqlMapper->isAppropriateFor(['driver' => 'mysql']));
+		$this->assertTrue($this->sqlMapper->isAppropriateFor(['driver' => 'pgsql']));
+		$this->assertTrue($this->sqlMapper->isAppropriateFor(['driver' => 'sqlsrv']));
 	}
 
 	public function testMapping()
@@ -36,9 +36,36 @@ class SqlMapperTest extends \PHPUnit_Framework_TestCase
 			'dbname'   => $configuration['database'],
 			'user'     => $configuration['username'],
 			'password' => $configuration['password'],
-			'charset'  => $configuration['charset']
+			'charset'  => $configuration['charset'],
+	        'prefix'   => $configuration['prefix']
 		];
 		$actual = $this->sqlMapper->map($configuration);
 		$this->assertEquals($expected, $actual);
 	}
+
+    public function testMappingWithoutPrefix() 
+    {
+		$configuration = [
+			'driver'   => 'mysql',
+			'host'     => 'localhost',
+			'database' => 'db',
+			'username' => 'somedude',
+			'password' => 'not safe',
+			'charset'  => 'whatevs'
+		];
+
+		$expected = [
+			'driver'   => 'pdo_mysql',
+			'host'     => $configuration['host'],
+			'dbname'   => $configuration['database'],
+			'user'     => $configuration['username'],
+			'password' => $configuration['password'],
+			'charset'  => $configuration['charset'],
+			'prefix'   => null
+		];
+
+		$actual = $this->sqlMapper->map($configuration);
+
+		$this->assertEquals($expected, $actual);
+    }
 }
