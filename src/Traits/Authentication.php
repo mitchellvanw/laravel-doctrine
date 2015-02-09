@@ -2,8 +2,8 @@
 
 use Doctrine\ORM\Mapping AS ORM;
 
-trait Authentication
-{
+trait Authentication {
+
     use RememberToken;
 
     /**
@@ -11,33 +11,27 @@ trait Authentication
      */
     private $password;
 
-    public function getPassword()
-    {
+    public function getPassword() {
         return $this->password;
     }
 
-    public function setPassword($password)
-    {
+    public function setPassword($password) {
         $this->password = $password;
     }
 
     /**
      * Get the unique identifier for the user.
-     *
      * @return mixed
      */
-    public function getAuthIdentifier()
-    {
+    public function getAuthIdentifier() {
         return $this->getId();
     }
 
     /**
      * Get the password for the user.
-     *
      * @return string
      */
-    public function getAuthPassword()
-    {
+    public function getAuthPassword() {
         return $this->getPassword();
     }
 } 
