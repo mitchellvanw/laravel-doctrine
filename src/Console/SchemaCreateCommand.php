@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputOption;
 class SchemaCreateCommand extends Command {
 
     protected $name = 'doctrine:schema:create';
-    protected $description = 'Create database schema from models';
+    protected $description = 'Create database schema from entities.';
 
     public function fire() {
         $tool = $this->laravel->make('Doctrine\ORM\Tools\SchemaTool');

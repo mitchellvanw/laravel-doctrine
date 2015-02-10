@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputOption;
 class SchemaDropCommand extends Command {
 
     protected $name = 'doctrine:schema:update';
-    protected $description = 'Update database schema to match models';
+    protected $description = 'Update database schema to match entities.';
 
     public function fire() {
         $tool = $this->laravel->make('Doctrine\ORM\Tools\SchemaTool');
