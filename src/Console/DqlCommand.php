@@ -19,7 +19,7 @@ class DqlCommand extends Command {
         $query = $entityManager->createQuery($this->argument('dql'));
         $query->setFirstResult((int) $this->option('first-result'));
         $query->setMaxResults((int) $this->option('max-result'));
-        if ($this->input->getOption('show-sql')) {
+        if ($this->input->getOption('sql')) {
             $this->line(Debug::dump($query->getSQL(), 2, true, false));
             return;
         }

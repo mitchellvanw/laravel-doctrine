@@ -42,13 +42,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider {
         $this->registerEntityManager();
         $this->registerClassMetadataFactory();
         $this->registerValidationVerifier();
-
-        $this->commands([
-            'Mitch\LaravelDoctrine\Console\GenerateProxiesCommand',
-            'Mitch\LaravelDoctrine\Console\SchemaCreateCommand',
-            'Mitch\LaravelDoctrine\Console\SchemaUpdateCommand',
-            'Mitch\LaravelDoctrine\Console\SchemaDropCommand'
-        ]);
+        $this->registerConsoleCommands();
     }
 
     /**
@@ -148,5 +142,18 @@ class LaravelDoctrineServiceProvider extends ServiceProvider {
         $default = $config['database.default'];
         $connection = $config["database.connections.{$default}"];
         return App::make(DriverMapper::class)->map($connection);
+    }
+
+    private function registerConsoleCommands() {
+        $this->commands([
+            'Mitch\LaravelDoctrine\Console\GenerateProxiesCommand',
+            'Mitch\LaravelDoctrine\Console\SchemaCreateCommand',
+            'Mitch\LaravelDoctrine\Console\SchemaUpdateCommand',
+            'Mitch\LaravelDoctrine\Console\SchemaDropCommand',
+            'Mitch\LaravelDoctrine\Console\SchemaValidateCommand',
+            'Mitch\LaravelDoctrine\Console\DqlCommand',
+            'Mitch\LaravelDoctrine\Console\EnsureProductionSettingsCommand',
+            'Mitch\LaravelDoctrine\Console\CacheClearQueryCommand',
+        ]);
     }
 }
