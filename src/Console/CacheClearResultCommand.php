@@ -3,6 +3,8 @@
 use InvalidArgumentException;
 use LogicException;
 use Symfony\Component\Console\Input\InputOption;
+use Doctrine\Common\Cache\ApcCache;
+use Doctrine\Common\Cache\XcacheCache;
 
 class CacheClearResultCommand extends Command {
 
