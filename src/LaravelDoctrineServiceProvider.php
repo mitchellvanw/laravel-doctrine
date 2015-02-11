@@ -154,6 +154,10 @@ class LaravelDoctrineServiceProvider extends ServiceProvider {
             'Mitch\LaravelDoctrine\Console\DqlCommand',
             'Mitch\LaravelDoctrine\Console\EnsureProductionSettingsCommand',
             'Mitch\LaravelDoctrine\Console\CacheClearQueryCommand',
+            'Mitch\LaravelDoctrine\Console\CacheClearMetadataCommand',
+            'Mitch\LaravelDoctrine\Console\CacheClearResultCommand',
+            'Mitch\LaravelDoctrine\Console\CacheClearCollectionRegionCommand',
+            'Mitch\LaravelDoctrine\Console\CacheClearEntityRegionCommand',
         ]);
     }
 }

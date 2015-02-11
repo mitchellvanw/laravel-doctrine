@@ -48,7 +48,7 @@ class CacheClearCollectionRegionCommand extends Command {
         return [
             ['owner-class', null, InputArgument::OPTIONAL, 'The owner entity name.'],
             ['association', null, InputArgument::OPTIONAL, 'The association collection name.'],
-            ['owner-id', null, InputArgument::OPTIONAL, 'owner-id'],
+            ['owner-id', null, InputArgument::OPTIONAL, 'The owner identifier.'],
         ];
     }
 
