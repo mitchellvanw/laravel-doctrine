@@ -7,7 +7,7 @@ use Doctrine\Common\Cache\ApcCache;
 use Doctrine\Common\Cache\XcacheCache;
 use Illuminate\Console\Command;
 
-class CacheClearQueryCommand extends Command {
+class CacheClearMetadataCommand extends Command {
 
     protected $name = 'doctrine:cache:clear-metadata';
     protected $description = 'Clear all metadata cache of the various cache drivers.';
@@ -22,10 +22,10 @@ class CacheClearQueryCommand extends Command {
         if ($cacheDriver instanceof XcacheCache)
             throw new LogicException("Cannot clear XCache Cache from Console, its shared in the Webserver memory and not accessible from the CLI.");
         $this->info('Clearing all metadata cache entries...');
-        $result  = $cacheDriver->deleteAll();
+        $result = $cacheDriver->deleteAll();
         $message = ($result) ? 'Successfully deleted cache entries.' : 'No cache entries were deleted.';
         if ($this->option('flush')) {
-            $result  = $cacheDriver->flushAll();
+            $result = $cacheDriver->flushAll();
             $message = ($result) ? 'Successfully flushed cache entries.' : $message;
         }
         $this->info($message);

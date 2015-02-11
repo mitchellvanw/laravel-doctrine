@@ -7,7 +7,7 @@ use Doctrine\Common\Cache\ApcCache;
 use Doctrine\Common\Cache\XcacheCache;
 use Illuminate\Console\Command;
 
-class CacheClearMetadataCommand extends Command {
+class CacheClearQueryCommand extends Command {
 
     protected $name = 'doctrine:cache:clear-query';
     protected $description = 'Clear all query cache of the various cache drivers.';
@@ -16,7 +16,7 @@ class CacheClearMetadataCommand extends Command {
         $entityManager = $this->laravel->make('Doctrine\ORM\EntityManagerInterface');
         $cacheDriver = $entityManager->getConfiguration()->getQueryCacheImpl();
         if ( ! $cacheDriver)
-            throw new InvalidArgumentException('No Query cache driver is configured on given EntityManager.');
+            throw new InvalidArgumentException('No query cache driver is configured on given EntityManager.');
         if ($cacheDriver instanceof ApcCache)
             throw new LogicException("Cannot clear APC Cache from Console, its shared in the Webserver memory and not accessible from the CLI.");
         if ($cacheDriver instanceof XcacheCache)
