@@ -1,6 +1,5 @@
 <?php namespace Mitch\LaravelDoctrine\Console;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputOption;
 
 class EnsureProductionSettingsCommand extends Command {

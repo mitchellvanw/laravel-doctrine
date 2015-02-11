@@ -1,7 +1,6 @@
 <?php namespace Mitch\LaravelDoctrine\Console;
 
 use Illuminate\Console\Command;
-use Doctrine\ORM\EntityManagerInterface;
 
 class GenerateProxiesCommand extends Command {
 
@@ -24,7 +23,7 @@ class GenerateProxiesCommand extends Command {
         }
         $this->info('Processing entities:');
         foreach ($metadata as $item)
-            $this->line($item->name);
+            $this->line("- {$item->name}");
         $entityManager->getProxyFactory()->generateProxyClasses($metadata, $directory);
         $this->info('Proxies have been created.');
     }

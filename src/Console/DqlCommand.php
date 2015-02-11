@@ -1,7 +1,7 @@
 <?php namespace Mitch\LaravelDoctrine\Console;
 
 use Doctrine\Common\Util\Debug;
-use Doctrine\ORM\EntityManagerInterface;
+use RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -15,7 +15,7 @@ class DqlCommand extends Command {
         $hydrationModeName = $this->option('hydrate');
         $hydrationMode = 'Doctrine\ORM\Query::HYDRATE_' . strtoupper(str_replace('-', '_', $hydrationModeName));
         if ( ! defined($hydrationMode))
-            throw new \RuntimeException("Hydration mode [{$hydrationModeName}] does not exist. It should be either: object. array, scalar, or single-scalar.");
+            throw new RuntimeException("Hydration mode [{$hydrationModeName}] does not exist. It should be either: object. array, scalar, or single-scalar.");
         $query = $entityManager->createQuery($this->argument('dql'));
         $query->setFirstResult((int) $this->option('first-result'));
         $query->setMaxResults((int) $this->option('max-result'));
@@ -23,7 +23,7 @@ class DqlCommand extends Command {
             $this->line(Debug::dump($query->getSQL(), 2, true, false));
             return;
         }
-        $results = $query->execute(array(), constant($hydrationMode));
+        $results = $query->execute([], constant($hydrationMode));
         $this->output->writeln(Debug::dump($results, $this->option('depth'), true, false));
     }
 

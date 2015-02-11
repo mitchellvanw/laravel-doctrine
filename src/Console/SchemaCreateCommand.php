@@ -1,8 +1,6 @@
 <?php namespace Mitch\LaravelDoctrine\Console;
 
 use Illuminate\Console\Command;
-use Doctrine\ORM\Tools\SchemaTool;
-use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Symfony\Component\Console\Input\InputOption;
 
 class SchemaCreateCommand extends Command {
