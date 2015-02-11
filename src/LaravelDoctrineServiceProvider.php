@@ -146,12 +146,15 @@ class LaravelDoctrineServiceProvider extends ServiceProvider {
 
     private function registerConsoleCommands() {
         $this->commands([
+            'Mitch\LaravelDoctrine\Console\InfoCommand',
             'Mitch\LaravelDoctrine\Console\GenerateProxiesCommand',
+            'Mitch\LaravelDoctrine\Console\GenerateEntitiesCommand',
             'Mitch\LaravelDoctrine\Console\SchemaCreateCommand',
             'Mitch\LaravelDoctrine\Console\SchemaUpdateCommand',
             'Mitch\LaravelDoctrine\Console\SchemaDropCommand',
             'Mitch\LaravelDoctrine\Console\SchemaValidateCommand',
             'Mitch\LaravelDoctrine\Console\DqlCommand',
+            'Mitch\LaravelDoctrine\Console\SqlCommand',
             'Mitch\LaravelDoctrine\Console\EnsureProductionSettingsCommand',
             'Mitch\LaravelDoctrine\Console\CacheClearQueryCommand',
             'Mitch\LaravelDoctrine\Console\CacheClearMetadataCommand',
@@ -159,9 +162,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider {
             'Mitch\LaravelDoctrine\Console\CacheClearCollectionRegionCommand',
             'Mitch\LaravelDoctrine\Console\CacheClearEntityRegionCommand',
             'Mitch\LaravelDoctrine\Console\CacheClearQueryRegionCommand',
-            'Mitch\LaravelDoctrine\Console\SqlCommand',
             'Mitch\LaravelDoctrine\Console\ImportSqlCommand',
-            'Mitch\LaravelDoctrine\Console\InfoCommand',
         ]);
     }
 }
