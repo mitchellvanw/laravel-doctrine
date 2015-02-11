@@ -19,17 +19,17 @@ class DqlCommand extends Command {
         $query = $entityManager->createQuery($this->argument('dql'));
         $query->setFirstResult((int) $this->option('first-result'));
         $query->setMaxResults((int) $this->option('max-result'));
-        if ($this->input->getOption('sql')) {
+        if ($this->option('sql')) {
             $this->line(Debug::dump($query->getSQL(), 2, true, false));
             return;
         }
         $results = $query->execute([], constant($hydrationMode));
-        $this->output->writeln(Debug::dump($results, $this->option('depth'), true, false));
+        $this->line(Debug::dump($results, $this->option('depth'), true, false));
     }
 
     protected function getArguments() {
         return [
-            ['dql', null, InputArgument::REQUIRED, 'DQL query.']
+            ['dql', null, InputArgument::REQUIRED, 'The DQL query to execute.']
         ];
     }
 
