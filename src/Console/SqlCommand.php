@@ -4,6 +4,7 @@ use Doctrine\Common\Util\Debug;
 use LogicException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Illuminate\Console\Command;
 
 class SqlCommand extends Command {
 

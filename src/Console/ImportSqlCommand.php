@@ -4,6 +4,7 @@ use Doctrine\Common\Util\Debug;
 use Doctrine\DBAL\Driver\PDOConnection;
 use InvalidArgumentException;
 use PDOException;
+use Illuminate\Console\Command;
 use RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;

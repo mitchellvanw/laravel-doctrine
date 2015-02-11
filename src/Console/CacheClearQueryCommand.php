@@ -5,6 +5,7 @@ use LogicException;
 use Symfony\Component\Console\Input\InputOption;
 use Doctrine\Common\Cache\ApcCache;
 use Doctrine\Common\Cache\XcacheCache;
+use Illuminate\Console\Command;
 
 class CacheClearMetadataCommand extends Command {
 

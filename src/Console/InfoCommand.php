@@ -3,6 +3,7 @@
 use Doctrine\Common\Util\Debug;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Illuminate\Console\Command;
 
 class InfoCommand extends Command {
 

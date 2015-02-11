@@ -1,6 +1,7 @@
 <?php namespace Mitch\LaravelDoctrine\Console;
 
 use Symfony\Component\Console\Input\InputOption;
+use Illuminate\Console\Command;
 
 class EnsureProductionSettingsCommand extends Command {
 
