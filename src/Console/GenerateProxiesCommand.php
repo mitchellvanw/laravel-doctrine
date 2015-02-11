@@ -3,6 +3,7 @@
 use Illuminate\Console\Command;
 use InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
+use Doctrine\ORM\Tools\Console\MetadataFilter;
 use Symfony\Component\Console\Input\InputOption;
 
 class GenerateProxiesCommand extends Command {

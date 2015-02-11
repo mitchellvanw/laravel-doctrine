@@ -4,6 +4,8 @@ use Illuminate\Console\Command;
 use InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Doctrine\ORM\Tools\Console\MetadataFilter;
+use Doctrine\ORM\Tools\EntityRepositoryGenerator;
 
 class GenerateRepositoriesCommand extends Command {
 
