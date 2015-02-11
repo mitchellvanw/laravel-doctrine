@@ -149,6 +149,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider {
             'Mitch\LaravelDoctrine\Console\InfoCommand',
             'Mitch\LaravelDoctrine\Console\GenerateProxiesCommand',
             'Mitch\LaravelDoctrine\Console\GenerateEntitiesCommand',
+            'Mitch\LaravelDoctrine\Console\GenerateRepositoriesCommand',
             'Mitch\LaravelDoctrine\Console\SchemaCreateCommand',
             'Mitch\LaravelDoctrine\Console\SchemaUpdateCommand',
             'Mitch\LaravelDoctrine\Console\SchemaDropCommand',
