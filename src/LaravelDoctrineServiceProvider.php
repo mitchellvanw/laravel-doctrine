@@ -164,6 +164,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider {
             'Mitch\LaravelDoctrine\Console\CacheClearEntityRegionCommand',
             'Mitch\LaravelDoctrine\Console\CacheClearQueryRegionCommand',
             'Mitch\LaravelDoctrine\Console\ImportSqlCommand',
+            'Mitch\LaravelDoctrine\Console\MappingDescribeCommand',
         ]);
     }
 }
