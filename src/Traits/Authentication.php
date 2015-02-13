@@ -27,7 +27,7 @@ trait Authentication {
      * @return mixed
      */
     public function getAuthIdentifier() {
-        return method_exists($this, 'getKeyName') ? $this->getKeyName() : 'id';
+	    return method_exists($this, 'getKey') ? $this->getKey() : $this->id;
     }
 
     /**
@@ -60,6 +60,6 @@ trait Authentication {
      * @return string
      */
     public function getRememberTokenName() {
-        return 'remember_token';
+        return 'rememberToken';
     }
 } 
