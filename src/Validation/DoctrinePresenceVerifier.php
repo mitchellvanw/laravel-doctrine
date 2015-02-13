@@ -27,7 +27,7 @@ class DoctrinePresenceVerifier implements PresenceVerifierInterface
 	 */
 	public function getCount($collection, $column, $value, $excludeId = null, $idColumn = null, array $extra = array())
 	{
-		$queryParts = ['SELECT COUNT(*) FROM', $collection, 'WHERE', "$column = ?"];
+		$queryParts = ['SELECT COUNT(*) as usercount FROM', $collection, 'WHERE', "$column = ?"];
 
 		if (!is_null($excludeId) && $excludeId != 'NULL')  {
 			$queryParts[] = 'AND '.($idColumn ?: 'id').' <> ?';
@@ -62,7 +62,7 @@ class DoctrinePresenceVerifier implements PresenceVerifierInterface
 	 */
 	public function getMultiCount($collection, $column, array $values, array $extra = array())
 	{
-		$queryParts = ['SELECT COUNT(*) FROM', $collection, 'WHERE', "$column IN (?)"];
+		$queryParts = ['SELECT COUNT(*) as usercount FROM', $collection, 'WHERE', "$column IN (?)"];
 
 		foreach ($extra as $key => $extraValue) {
 			$queryParts[] = "AND $key = ?";
@@ -87,6 +87,10 @@ class DoctrinePresenceVerifier implements PresenceVerifierInterface
 	private function createQueryFrom(array $queryParts = [])
 	{
 		$rsm = new ResultSetMapping();
+
+		//If we don't set up a scalar result mapping, we'll always get back null from the hydrateColumnInfo function in
+		//the abstract class Doctrine\ORM\Internal\Hydration\AbstractHydrator, which all the hydrators extend.
+		$rsm = $rsm->addScalarResult('usercount','usercount','integer');
 
 		return $this->entityManager->createNativeQuery(implode(' ', $queryParts), $rsm);
 	}
