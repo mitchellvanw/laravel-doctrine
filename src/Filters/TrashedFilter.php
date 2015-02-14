@@ -10,6 +10,6 @@ class TrashedFilter extends SQLFilter {
     }
 
     private function isSoftDeletable($entity) {
-        return array_key_exists('Mitch\LaravelDoctrine\Traits\SoftDeletes', class_uses_recursive(get_class($entity)));
+        return array_key_exists('Mitch\LaravelDoctrine\Traits\SoftDeletes', class_uses_recursive($entity));
     }
 }
