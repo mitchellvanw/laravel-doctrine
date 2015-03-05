@@ -1,5 +1,6 @@
 <?php namespace Mitch\LaravelDoctrine\Console;
 
+use Doctrine\ORM\Tools\SchemaValidator;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
