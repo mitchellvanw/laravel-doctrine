@@ -89,7 +89,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     public function registerCacheManager()
     {
         $this->app->bind(CacheManager::class, function ($app) {
-            $manager = new CacheManager($app['config']['doctrine.cache']);
+            $manager = new CacheManager(config('doctrine.cache'));
             $manager->add(new Cache\ApcProvider);
             $manager->add(new Cache\MemcacheProvider);
             $manager->add(new Cache\RedisProvider);
@@ -102,10 +102,10 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     private function registerEntityManager()
     {
         $this->app->singleton(EntityManager::class, function ($app) {
-            $config = $app['config']['doctrine'];
+            $config = config('doctrine');
             $metadata = Setup::createAnnotationMetadataConfiguration(
                 $config['metadata'],
-                $app['config']['app.debug'],
+                config('app.debug'),
                 $config['proxy']['directory'],
                 $app[CacheManager::class]->getCache($config['cache_provider']),
                 $config['simple_annotations']
@@ -120,7 +120,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 
             $eventManager = new EventManager;
 
-            $connection_config = $this->mapLaravelToDoctrineConfig($app['config']);
+            $connection_config = $this->mapLaravelToDoctrineConfig(config());
 
             //load prefix listener
             if(isset($connection_config['prefix'])) {
@@ -151,7 +151,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             return new DoctrineUserProvider(
                 $app['Illuminate\Hashing\HasherInterface'],
                 $app[EntityManager::class],
-                $app['config']['auth.model']
+                config('auth.model')
             );
         });
     }
