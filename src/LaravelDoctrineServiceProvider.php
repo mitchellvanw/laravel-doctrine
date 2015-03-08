@@ -82,7 +82,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     public function registerValidationVerifier()
     {
         $this->app->bind('validation.presence', function() {
-            return new DoctrinePresenceVerifier(EntityManagerInterface::class);
+            return new DoctrinePresenceVerifier($this->app[EntityManagerInterface::class]);
         }, true);
     }
 
