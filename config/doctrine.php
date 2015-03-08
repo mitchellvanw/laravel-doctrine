@@ -13,8 +13,8 @@ return [
         'namespace'     => null
     ],
 
-    // Available: null, apc, xcache, redis, memcache
-    'cache_provider' => null,
+    // Available: null, array, apc, xcache, redis, memcache
+    'cache_provider' => 'array',
 
     'cache' => [
         'redis' => [
