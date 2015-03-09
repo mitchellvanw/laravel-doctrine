@@ -53,7 +53,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider {
      */
     private function registerConfigurationMapper()
     {
-        $this->app->bind(DriverMapper::class, function () {
+        $this->app->bind('Mitch\LaravelDoctrine\Configuration\DriverMapper', function () {
             $mapper = new DriverMapper;
             $mapper->registerMapper(new SqlMapper);
             $mapper->registerMapper(new SqliteMapper);
@@ -96,7 +96,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider {
                 $app['Mitch\LaravelDoctrine\CacheManager']->getCache($config['cache_provider']),
                 $config['simple_annotations']
             );
-            $metadata->addFilter('trashed', TrashedFilter::class);
+            $metadata->addFilter('trashed', 'Mitch\LaravelDoctrine\Filters\TrashedFilter');
             $metadata->setAutoGenerateProxyClasses($config['proxy']['auto_generate']);
             $metadata->setDefaultRepositoryClassName($config['repository']);
             $metadata->setSQLLogger($config['logger']);
