@@ -11,6 +11,7 @@ use Illuminate\Auth\AuthManager;
 use Illuminate\Support\ServiceProvider;
 use Mitch\LaravelDoctrine\Cache;
 use Mitch\LaravelDoctrine\Configuration\DriverMapper;
+use Mitch\LaravelDoctrine\Configuration\LaravelNamingStrategy;
 use Mitch\LaravelDoctrine\Configuration\SqlMapper;
 use Mitch\LaravelDoctrine\Configuration\SqliteMapper;
 use Mitch\LaravelDoctrine\Configuration\OCIMapper;
@@ -108,6 +109,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             $metadata->setAutoGenerateProxyClasses($config['proxy']['auto_generate']);
             $metadata->setDefaultRepositoryClassName($config['repository']);
             $metadata->setSQLLogger($config['logger']);
+            $metadata->setNamingStrategy($app->make(LaravelNamingStrategy::class));
 
             if (isset($config['proxy']['namespace']))
                 $metadata->setProxyNamespace($config['proxy']['namespace']);
