@@ -12,8 +12,10 @@ class SoftDeletableListener {
             if ($this->isSoftDeletable($entity)) {
                 $metadata = $entityManager->getClassMetadata(get_class($entity));
                 $oldDeletedAt = $metadata->getFieldValue($entity, 'deletedAt');
-                if ($oldDeletedAt instanceof DateTime)
+                if ($oldDeletedAt instanceof DateTime) {
+                    $entityManager->persist($entity);
                     continue;
+                }
                 $now = new DateTime;
                 $metadata->setFieldValue($entity, 'deletedAt', $now);
                 $entityManager->persist($entity);
