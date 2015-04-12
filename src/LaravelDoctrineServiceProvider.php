@@ -87,6 +87,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             $manager = new CacheManager($app['config']['doctrine::doctrine.cache']);
             $manager->add(new Cache\ApcProvider);
             $manager->add(new Cache\MemcacheProvider);
+            $manager->add(new Cache\MemcachedProvider);
             $manager->add(new Cache\RedisProvider);
             $manager->add(new Cache\XcacheProvider);
             $manager->add(new Cache\NullProvider);
