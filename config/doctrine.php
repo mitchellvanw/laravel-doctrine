@@ -28,8 +28,13 @@ return [
         ]
     ],
 
-    'event_listeners' => [
-        Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener::class => Doctrine\ORM\Events::onFlush
+    'events'=> [
+        'listeners' => [
+            Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener::class => Doctrine\ORM\Events::onFlush
+        ],
+        'subscribers' => [
+            //
+        ]
     ],
 
     'repository' => 'Doctrine\ORM\EntityRepository',

@@ -123,8 +123,12 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
                 $eventManager->addEventListener(Events::loadClassMetadata, $tablePrefix);
             }
 
-            foreach($config['event_listeners'] as $listener => $event) {
+            foreach($config['events']['listeners'] as $listener => $event) {
                 $eventManager->addEventListener($event, new $listener);
+            }
+
+            foreach($config['events']['subscribers'] as $subscriber) {
+                $eventManager->addEventSubscriber(new $subscriber);
             }
 
             $entityManager = EntityManager::create($connection_config, $metadata, $eventManager);
