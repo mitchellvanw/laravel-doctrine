@@ -28,6 +28,10 @@ return [
         ]
     ],
 
+    'filters' => [
+        'trashed' => Mitch\LaravelDoctrine\Filters\TrashedFilter::class
+    ],
+
     'repository' => 'Doctrine\ORM\EntityRepository',
 
     'repositoryFactory' => null,
