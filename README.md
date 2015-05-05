@@ -57,7 +57,7 @@ Once the package has been installed you'll need to add the service provider. Ope
 new item to the `providers` array.
 
 ```php
-'Mitch\LaravelDoctrine\LaravelDoctrineServiceProvider'
+'Mitch\LaravelDoctrine\LaravelDoctrine\ServiceProvider'
 ```
 
 After This you'll need to add the facade. Open your `app/config/app.php` configuration file, and add a new item to the `aliases` array.
