@@ -41,7 +41,7 @@ class GenerateProxiesCommand extends Command
             $this->error('No metadata found to generate any entities.');
             exit;
         }
-        $directory = $this->laravel['config']['doctrine::doctrine.proxy.directory'];
+        $directory = $this->laravel['config']['doctrine.proxy.directory'];
         if ( ! $directory) {
             $this->error('The proxy directory has not been set.');
             exit;
