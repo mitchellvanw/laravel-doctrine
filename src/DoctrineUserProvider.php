@@ -2,11 +2,11 @@
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Illuminate\Auth\UserProviderInterface;
+use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Hashing\Hasher;
 
-class DoctrineUserProvider implements UserProviderInterface
+class DoctrineUserProvider implements UserProvider
 {
     /**
      * @var Hasher
