@@ -32,7 +32,10 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->package('mitchellvanw/laravel-doctrine', 'doctrine', __DIR__ . '/..');
+        $this->publishes([
+            __DIR__.'/../config/doctrine' => config_path('doctrine.php'),
+        ]);
+
         $this->extendAuthManager();
         $this->extendMigrator();
     }
@@ -56,6 +59,10 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             'Mitch\LaravelDoctrine\Console\SchemaUpdateCommand',
             'Mitch\LaravelDoctrine\Console\SchemaDropCommand'
         ]);
+
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/doctrine.php', 'doctrine'
+        );
     }
 
     /**
@@ -79,7 +86,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
      */
     public function registerValidationVerifier()
     {
-        $this->app->bindShared('validation.presence', function()
+        $this->app->singleton('validation.presence', function()
         {
             return new DoctrinePresenceVerifier(EntityManagerInterface::class);
         });
@@ -88,7 +95,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     public function registerCacheManager()
     {
         $this->app->bind(CacheManager::class, function ($app) {
-            $manager = new CacheManager($app['config']['doctrine::doctrine.cache']);
+            $manager = new CacheManager($app['config']['doctrine.cache']);
             $manager->add(new Cache\ApcProvider);
             $manager->add(new Cache\MemcacheProvider);
             $manager->add(new Cache\RedisProvider);
@@ -101,7 +108,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     private function registerEntityManager()
     {
         $this->app->singleton(EntityManager::class, function ($app) {
-            $config = $app['config']['doctrine::doctrine'];
+            $config = $app['config']['doctrine'];
 
             $config['metadata'] = array_merge($config['metadata'], [
                 __DIR__ . '/Migrations',
@@ -164,7 +171,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 
     private function extendMigrator()
     {
-        $this->app->bindShared('migration.repository', function($app) {
+        $this->app->singleton('migration.repository', function($app) {
             return new DoctrineMigrationRepository(
                 function() use($app) {
                     return $app->make('Doctrine\ORM\EntityManagerInterface');
@@ -181,7 +188,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 
     private function registerReminderRepository()
     {
-        $this->app->bindShared('auth.reminder.repository', function($app) {
+        $this->app->singleton('auth.reminder.repository', function($app) {
             $key = $app['config']['app.key'];
 
             $expire = $app['config']->get('auth.reminder.expire', 60);
