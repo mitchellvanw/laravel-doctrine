@@ -26,7 +26,7 @@ Begin reading [the full documentation](https://github.com/mitchellvanw/laravel-d
 
 ## Caveats
 
-At the moment Doctrine\ORM version 2.5 is still in beta. As a result the composer install may require you to change
+At the moment Doctrine\migrations version 1.0 is still in alpha. As a result the composer install may require you to change
 the `minimum-stability` in your `composer.json` to `dev`.
 
 If you don't want to affect the stability of the rest of the packages, you can add the following property in your `composer.json`:

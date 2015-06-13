@@ -25,5 +25,7 @@
             "Mitch\\LaravelDoctrine\\": "src/",
 	        "Tests\\": "tests/"
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
