@@ -14,6 +14,20 @@ class DoctrineMigrationRepository implements MigrationRepositoryInterface {
     protected $entities;
 
     /**
+     * The schema tool
+     *
+     * @var \Doctrine\ORM\Tools\SchemaTool
+     */
+    protected $schema;
+
+    /**
+     * The metadata factory
+     *
+     * @var \Doctrine\ORM\Mapping\ClassMetadataFactory
+     */
+    protected $metadata;
+
+    /**
      * Create a new database migration repository instance.
      *
      * @param callable $entitiesCallback
@@ -26,6 +40,7 @@ class DoctrineMigrationRepository implements MigrationRepositoryInterface {
         $this->schemaCallback = $schemaCallback;
         $this->metadataCallback = $metadataCallback;
     }
+
     /**
      * Get the ran migrations.
      *
@@ -33,9 +48,7 @@ class DoctrineMigrationRepository implements MigrationRepositoryInterface {
      */
     public function getRan()
     {
-        $migrations = $this->getEntities()->createQueryBuilder()
-            ->select('o.migration')
-            ->from('Mitch\LaravelDoctrine\Migrations\Migration', 'o')
+        $migrations = $this->query()
             ->getQuery()->getResult();
 
         $return = [];
@@ -117,7 +130,7 @@ class DoctrineMigrationRepository implements MigrationRepositoryInterface {
      */
     public function createRepository()
     {
-        $this->getSchema()->updateSchema($this->getMetadata()->getAllMetadata());
+        $this->getSchemaTool()->updateSchema($this->getMetadata()->getAllMetadata());
     }
     /**
      * Determine if the migration repository exists.

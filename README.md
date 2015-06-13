@@ -4,7 +4,7 @@
 [![License](https://poser.pugx.org/mitchellvanw/laravel-doctrine/license.png)](https://packagist.org/packages/mitchellvanw/laravel-doctrine)
 [![Total Downloads](https://poser.pugx.org/mitchellvanw/laravel-doctrine/downloads.png)](https://packagist.org/packages/mitchellvanw/laravel-doctrine)
 
-A Doctrine 2 implementation that melts with Laravel 4.
+A Doctrine 2 implementation that melts with Laravel 5.
 
 ## Documentation
 
