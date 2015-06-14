@@ -10,13 +10,13 @@ class DoctrinePresenceVerifier implements PresenceVerifierInterface
 {
 
     /**
-     * @var EntityManagerInterface
+     * @var callable
      */
 	protected $entityManager;
 
-	public function __construct(callable $entityManagerFactory)
+	public function __construct(callable $entityManager)
 	{
-		$this->entityManagerFactory = $entityManagerFactory;
+		$this->entityManager = $entityManager;
 	}
 	/**
 	 * Count the number of objects in a collection having the given value.
@@ -96,11 +96,8 @@ class DoctrinePresenceVerifier implements PresenceVerifierInterface
 	}
 
     private function getEntityManager() {
-        if($this->entityManager = null) {
-            $callable = $this->entityManagerFactory;
-            $this->entityManager = $callable();
-        }
-        return $this->entityManager;
+        $callable = $this->entityManager;
+        return $callable();
     }
 
 }
