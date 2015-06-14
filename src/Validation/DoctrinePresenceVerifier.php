@@ -8,11 +8,15 @@ use Illuminate\Validation\PresenceVerifierInterface;
 
 class DoctrinePresenceVerifier implements PresenceVerifierInterface
 {
+
+    /**
+     * @var EntityManagerInterface
+     */
 	protected $entityManager;
 
-	public function __construct(EntityManagerInterface $entityManager)
+	public function __construct(callable $entityManagerFactory)
 	{
-		$this->entityManager = $entityManager;
+		$this->entityManagerFactory = $entityManagerFactory;
 	}
 	/**
 	 * Count the number of objects in a collection having the given value.
@@ -25,7 +29,7 @@ class DoctrinePresenceVerifier implements PresenceVerifierInterface
 	 * @param  array $extra
 	 * @return int
 	 */
-	public function getCount($collection, $column, $value, $excludeId = null, $idColumn = null, array $extra = array())
+	public function getCount($collection, $column, $value, $excludeId = null, $idColumn = null, array $extra = [])
 	{
 		$queryParts = ['SELECT COUNT(*) FROM', $collection, 'WHERE', "$column = ?"];
 
@@ -60,7 +64,7 @@ class DoctrinePresenceVerifier implements PresenceVerifierInterface
 	 * @param  array $extra
 	 * @return int
 	 */
-	public function getMultiCount($collection, $column, array $values, array $extra = array())
+	public function getMultiCount($collection, $column, array $values, array $extra = [])
 	{
 		$queryParts = ['SELECT COUNT(*) FROM', $collection, 'WHERE', "$column IN (?)"];
 
@@ -88,6 +92,15 @@ class DoctrinePresenceVerifier implements PresenceVerifierInterface
 	{
 		$rsm = new ResultSetMapping();
 
-		return $this->entityManager->createNativeQuery(implode(' ', $queryParts), $rsm);
+		return $this->getEntityManager()->createNativeQuery(implode(' ', $queryParts), $rsm);
 	}
+
+    private function getEntityManager() {
+        if($this->entityManager = null) {
+            $callable = $this->entityManagerFactory;
+            $this->entityManager = $callable();
+        }
+        return $this->entityManager;
+    }
+
 }

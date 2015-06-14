@@ -88,7 +88,9 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     {
         $this->app->singleton('validation.presence', function()
         {
-            return new DoctrinePresenceVerifier($this->app->make(EntityManagerInterface::class));
+            return new DoctrinePresenceVerifier(function() {
+                return $this->app->make(EntityManagerInterface::class);
+            });
         });
     }
     
