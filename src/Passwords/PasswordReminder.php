@@ -1,6 +1,6 @@
 <?php
 
-namespace Mitch\LaravelDoctrine\Reminders;
+namespace Mitch\LaravelDoctrine\Passwords;
 
 use DateTime;
 use Doctrine\ORM\Mapping AS ORM;
@@ -9,7 +9,6 @@ use Doctrine\ORM\Mapping AS ORM;
  * @ORM\Entity
  * @ORM\Table(name="password_reminders")
  */
-
 class PasswordReminder {
 
     /**

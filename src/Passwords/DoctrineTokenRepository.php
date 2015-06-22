@@ -1,13 +1,13 @@
 <?php
 
-namespace Mitch\LaravelDoctrine\Reminders;
+namespace Mitch\LaravelDoctrine\Passwords;
 
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
-use Illuminate\Auth\Reminders\RemindableInterface;
-use Illuminate\Auth\Reminders\ReminderRepositoryInterface;
+use Illuminate\Auth\Passwords\TokenRepositoryInterface;
+use Illuminate\Contracts\Auth\CanResetPassword;
 
-class DoctrineReminderRepository implements ReminderRepositoryInterface {
+class DoctrineTokenRepository implements TokenRepositoryInterface {
 
     /**
      * Constructs the repository.
@@ -16,7 +16,6 @@ class DoctrineReminderRepository implements ReminderRepositoryInterface {
      * @param string                 $hashKey
      * @param int                    $expires
      */
-
     public function __construct(EntityManagerInterface $entities, $hashKey, $expires = 60)
     {
         $this->entities = $entities;
@@ -27,12 +26,12 @@ class DoctrineReminderRepository implements ReminderRepositoryInterface {
     /**
      * Create a new reminder record and token.
      *
-     * @param  \Illuminate\Auth\Reminders\RemindableInterface $user
+     * @param  \Illuminate\Contracts\Auth\CanResetPassword $user
      * @return string
      */
-    public function create(RemindableInterface $user)
+    public function create(CanResetPassword $user)
     {
-        $email = $user->getReminderEmail();
+        $email = $user->getEmailForPasswordReset();
 
         $this->deleteExisting($user);
 
@@ -51,12 +50,12 @@ class DoctrineReminderRepository implements ReminderRepositoryInterface {
     /**
      * Create a new token for the user.
      *
-     * @param  \Illuminate\Auth\Reminders\RemindableInterface  $user
+     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
      * @return string
      */
-    protected function createNewToken(RemindableInterface $user)
+    protected function createNewToken(CanResetPassword $user)
     {
-        $email = $user->getReminderEmail();
+        $email = $user->getEmailForPasswordReset();
 
         $value = str_shuffle(sha1($email.spl_object_hash($this).microtime(true)));
 
@@ -66,14 +65,14 @@ class DoctrineReminderRepository implements ReminderRepositoryInterface {
     /**
      * Delete all existing reset tokens from the database.
      *
-     * @param  \Illuminate\Auth\Reminders\RemindableInterface  $user
+     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
      * @return int
      */
-    protected function deleteExisting(RemindableInterface $user)
+    protected function deleteExisting(CanResetPassword $user)
     {
         return $this->makeDelete()
             ->where('o.email = :email')
-            ->setParameter('email', $user->getReminderEmail())
+            ->setParameter('email', $user->getEmailForPasswordReset())
             ->getQuery()
             ->execute();
     }
@@ -81,13 +80,13 @@ class DoctrineReminderRepository implements ReminderRepositoryInterface {
     /**
      * Determine if a reminder record exists and is valid.
      *
-     * @param  \Illuminate\Auth\Reminders\RemindableInterface $user
-     * @param  string                                         $token
+     * @param  \Illuminate\Contracts\Auth\CanResetPassword $user
+     * @param  string                                      $token
      * @return bool
      */
-    public function exists(RemindableInterface $user, $token)
+    public function exists(CanResetPassword $user, $token)
     {
-        $email = $user->getReminderEmail();
+        $email = $user->getEmailForPasswordReset();
 
         $reminder = $this->makeSelect()
             ->where('o.email = :email')

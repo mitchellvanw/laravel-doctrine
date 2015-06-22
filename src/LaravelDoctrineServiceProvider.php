@@ -19,6 +19,7 @@ use Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener;
 use Mitch\LaravelDoctrine\EventListeners\TablePrefix;
 use Mitch\LaravelDoctrine\Filters\TrashedFilter;
 use Mitch\LaravelDoctrine\Migrations\DoctrineMigrationRepository;
+use Mitch\LaravelDoctrine\Passwords\DoctrineTokenRepository;
 use Mitch\LaravelDoctrine\Reminders\DoctrineReminderRepository;
 use Mitch\LaravelDoctrine\Validation\DoctrinePresenceVerifier;
 
@@ -114,7 +115,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 
             $config['metadata'] = array_merge($config['metadata'], [
                 __DIR__ . '/Migrations',
-                __DIR__ . '/Reminders'
+                __DIR__ . '/Passwords'
             ]);
 
             $metadata = Setup::createAnnotationMetadataConfiguration(
@@ -190,12 +191,12 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 
     private function registerReminderRepository()
     {
-        $this->app->singleton('auth.reminder.repository', function($app) {
+        $this->app->singleton('auth.password.tokens', function($app) {
             $key = $app['config']['app.key'];
 
             $expire = $app['config']->get('auth.reminder.expire', 60);
 
-            return new DoctrineReminderRepository($app->make('Doctrine\ORM\EntityManagerInterface'), $key, $expire);
+            return new DoctrineTokenRepository($this->app->make('Doctrine\ORM\EntityManagerInterface'), $key, $expire);
         });
     }
 
