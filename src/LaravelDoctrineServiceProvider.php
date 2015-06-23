@@ -5,9 +5,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\Common\EventManager;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Support\ServiceProvider;
 use Mitch\LaravelDoctrine\Cache;
 use Mitch\LaravelDoctrine\Configuration\DriverMapper;
@@ -20,7 +22,6 @@ use Mitch\LaravelDoctrine\EventListeners\TablePrefix;
 use Mitch\LaravelDoctrine\Filters\TrashedFilter;
 use Mitch\LaravelDoctrine\Migrations\DoctrineMigrationRepository;
 use Mitch\LaravelDoctrine\Passwords\DoctrineTokenRepository;
-use Mitch\LaravelDoctrine\Reminders\DoctrineReminderRepository;
 use Mitch\LaravelDoctrine\Validation\DoctrinePresenceVerifier;
 
 class LaravelDoctrineServiceProvider extends ServiceProvider
@@ -165,7 +166,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     {
         $this->app[AuthManager::class]->extend('doctrine', function ($app) {
             return new DoctrineUserProvider(
-                $app['Illuminate\Hashing\HasherInterface'],
+                $app[Hasher::class],
                 $app[EntityManager::class],
                 $app['config']['auth.model']
             );
@@ -177,13 +178,13 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         $this->app->singleton('migration.repository', function($app) {
             return new DoctrineMigrationRepository(
                 function() use($app) {
-                    return $app->make('Doctrine\ORM\EntityManagerInterface');
+                    return $app->make(EntityManagerInterface::class);
                 },
                 function() use($app) {
-                    return $app->make('Doctrine\ORM\Tools\SchemaTool');
+                    return $app->make(SchemaTool::class);
                 },
                 function() use($app) {
-                    return $app->make('Doctrine\ORM\Mapping\ClassMetadataFactory');
+                    return $app->make(ClassMetadataFactory::class);
                 }
             );
         });
@@ -196,7 +197,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 
             $expire = $app['config']->get('auth.reminder.expire', 60);
 
-            return new DoctrineTokenRepository($this->app->make('Doctrine\ORM\EntityManagerInterface'), $key, $expire);
+            return new DoctrineTokenRepository($this->app->make(EntityManagerInterface::class), $key, $expire);
         });
     }
 
@@ -226,6 +227,6 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     {
         $default = $config['database.default'];
         $connection = $config["database.connections.{$default}"];
-        return App::make(DriverMapper::class)->map($connection);
+        return $this->app->make(DriverMapper::class)->map($connection);
     }
 }
