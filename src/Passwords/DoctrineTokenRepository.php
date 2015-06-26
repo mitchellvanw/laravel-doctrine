@@ -147,13 +147,13 @@ class DoctrineTokenRepository implements TokenRepositoryInterface {
     {
         return $this->entities->createQueryBuilder()
             ->select('o')
-            ->from('Mitch\LaravelDoctrine\Reminders\PasswordReminder', 'o');
+            ->from(PasswordReminder::class, 'o');
     }
 
     protected function makeDelete()
     {
         return $this->entities->createQueryBuilder()
-            ->delete('Mitch\LaravelDoctrine\Reminders\PasswordReminder', 'o');
+            ->delete(PasswordReminder::class, 'o');
     }
 
 }
