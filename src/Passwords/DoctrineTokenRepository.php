@@ -94,9 +94,9 @@ class DoctrineTokenRepository implements TokenRepositoryInterface {
             ->setParameter('email', $email)
             ->setParameter('token', $token)
             ->getQuery()
-            ->getFirstResult();
+            ->getOneOrNullResult();
 
-        return !$this->reminderExpired($reminder);
+        return $reminder != null && !$this->reminderExpired($reminder);
     }
 
     /**
@@ -105,9 +105,9 @@ class DoctrineTokenRepository implements TokenRepositoryInterface {
      * @param  PasswordReminder  $reminder
      * @return bool
      */
-    protected function reminderExpired($reminder)
+    protected function reminderExpired(PasswordReminder $reminder)
     {
-        $createdPlusHour = strtotime($reminder->getCreatedAt()) + $this->expires;
+        $createdPlusHour = $reminder->getCreatedAt()->getTimestamp() + $this->expires;
 
         return $createdPlusHour < time();
     }
