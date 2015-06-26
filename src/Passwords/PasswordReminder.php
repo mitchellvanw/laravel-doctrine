@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping AS ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="password_reminders")
+ * @ORM\Table(name="password_resets")
  */
 class PasswordReminder {
 

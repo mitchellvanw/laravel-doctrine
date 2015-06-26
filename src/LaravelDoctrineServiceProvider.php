@@ -52,7 +52,6 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         $this->registerCacheManager();
         $this->registerEntityManager();
         $this->registerClassMetadataFactory();
-        $this->registerReminderRepository();
         $this->registerValidationVerifier();
 
         $this->commands([
@@ -187,17 +186,6 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
                     return $app->make(ClassMetadataFactory::class);
                 }
             );
-        });
-    }
-
-    private function registerReminderRepository()
-    {
-        $this->app->singleton('auth.password.tokens', function($app) {
-            $key = $app['config']['app.key'];
-
-            $expire = $app['config']->get('auth.reminder.expire', 60);
-
-            return new DoctrineTokenRepository($this->app->make(EntityManagerInterface::class), $key, $expire);
         });
     }
 
