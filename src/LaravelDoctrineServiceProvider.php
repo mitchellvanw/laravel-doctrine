@@ -35,7 +35,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/../config/doctrine' => config_path('doctrine.php'),
+            __DIR__.'/../config/doctrine.php' => config_path('doctrine.php'),
         ]);
 
         $this->extendAuthManager();
