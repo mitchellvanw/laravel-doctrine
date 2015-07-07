@@ -10,6 +10,7 @@ use Doctrine\ORM\Tools\Setup;
 use Doctrine\Common\EventManager;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 use Mitch\LaravelDoctrine\Cache;
 use Mitch\LaravelDoctrine\Configuration\DriverMapper;
@@ -187,6 +188,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
                 }
             );
         });
+        $this->app->bind(MigrationRepositoryInterface::class, 'migration.repository');
     }
 
     /**
