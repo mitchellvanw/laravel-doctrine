@@ -1,6 +1,7 @@
 <?php
 namespace Mitch\LaravelDoctrine\Validation;
 
+use App;
 use EntityManager;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,28 +28,36 @@ class DoctrinePresenceVerifier implements PresenceVerifierInterface
 	 */
 	public function getCount($collection, $column, $value, $excludeId = null, $idColumn = null, array $extra = array())
 	{
-		$queryParts = ['SELECT COUNT(*) FROM', $collection, 'WHERE', "$column = ?"];
+		$config = Config::get('doctrine');
+		// add the entity namespace to your doctrine config
+		// i.e. 'entity_namespace' => 'App\\Entity\\',
+        	$namespace = $config['entity_namespace'];
 
-		if (!is_null($excludeId) && $excludeId != 'NULL')  {
-			$queryParts[] = 'AND '.($idColumn ?: 'id').' <> ?';
-		}
-
-		foreach ($extra as $key => $extraValue) {
-			$queryParts[] = "AND $key = ?";
-		}
-
-		$query = $this->createQueryFrom($queryParts);
-		$query->setParameter(1, $value);
-
-		if (!is_null($excludeId) && $excludeId != 'NULL')  {
-			$query->setParameter(2, $excludeId);
-		}
-
-		foreach ($extra as $key => $extraValue) {
-			$query->setParameter($key + 3, $extraValue);
-		}
-
-		return $query->getSingleScalarResult();
+	        $query = 'SELECT COUNT(ent) ';
+	        $query .= 'FROM ' . $namespace . $collection . ' ent ';
+	        $query .= 'WHERE ent.' . $column . ' = :value ';
+	
+	        if (!is_null($excludeId) && $excludeId != 'NULL') {
+	            $query .= 'AND ent.'.($idColumn ?: 'id').' <> :excludeid ';
+	        }
+	
+	        foreach ($extra as $key => $extraValue) {
+	            $query .= 'AND ent.' . $key . ' = :' . $key . ' ';
+	        }
+	
+	        $query = $this->entityManager
+	            ->createQuery($query)
+	            ->setParameter('value', $value);
+	
+	        if (!is_null($excludeId) && $excludeId != 'NULL') {
+	            $query->setParameter('excludeid', $excludeId);
+	        }
+	
+	        foreach ($extra as $key => $extraValue) {
+	            $query->setParameter($key, $extraValue);
+	        }
+	
+	        return $query->getSingleScalarResult();
 	}
 
 	/**
