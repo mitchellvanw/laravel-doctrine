@@ -108,7 +108,6 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
                 $app['config']['app.debug'],
                 $config['proxy']['directory'],
                 $cacheProvider,
-                $app[CacheManager::class]->getCache($config['cache_provider']),
                 $config['simple_annotations']
             );
             $metadata->addFilter('trashed', TrashedFilter::class);
