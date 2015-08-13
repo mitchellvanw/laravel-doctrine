@@ -87,7 +87,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             $config = $app['config']['doctrine::doctrine'];
             $manager = new CacheManager($config['cache']);
 
-            foreach ($config['cache_providers'] as $cacheProvider) {
+            foreach ($config['available_cache_providers'] as $cacheProvider) {
                 if (! ($cacheProvider instanceof Cache\Provider)) {
                     throw new \RuntimeException(sprintf('Expected implementation of `Cache\Provider` interface, but got: `%s`', get_class($cacheProvider)));
                 }

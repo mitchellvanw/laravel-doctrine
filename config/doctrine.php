@@ -20,7 +20,7 @@ return [
     // and then put its name here.
     'cache_provider' => null,
 
-    'cache_providers' => [
+    'available_cache_providers' => [
 //        new Cache\ApcProvider,
 //        new Cache\MemcacheProvider,
 //        new Cache\RedisProvider,
