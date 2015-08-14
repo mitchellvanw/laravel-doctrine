@@ -100,8 +100,10 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
         $this->app->singleton(EntityManager::class, function ($app) {
             $config = $app['config']['doctrine::doctrine'];
 
-            /** @var CacheProvider|null $cacheProvider */
-            $cacheProvider = $app['Mitch\LaravelDoctrine\CacheManager']->getCache($config['cache_provider']);
+            /** @var CacheManager $cacheManager */
+            $cacheManager = $app['Mitch\LaravelDoctrine\CacheManager'];
+
+            $cacheProvider = $cacheManager->getCache($config['cache_provider']);
 
             $metadata = Setup::createAnnotationMetadataConfiguration(
                 $config['metadata'],
@@ -138,6 +140,16 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
                 && $cacheProvider
             ) {
                 $cacheProvider->setNamespace($config['cache_key_namespace']);
+            }
+
+            if (
+                isset($config['result_cache_key_namespace'])
+                && isset($config['cache_provider'])
+            ) {
+                $resultCacheProvider = $cacheManager->getCache($config['cache_provider']);
+                $resultCacheProvider->setNamespace($config['result_cache_key_namespace']);
+
+                $metadata->setResultCacheImpl($cacheManager->getCache($config['cache_provider']));
             }
 
             $eventManager->addEventListener(Events::onFlush, new SoftDeletableListener);

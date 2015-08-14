@@ -1,5 +1,6 @@
-<?php namespace Mitch\LaravelDoctrine; 
+<?php namespace Mitch\LaravelDoctrine;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Mitch\LaravelDoctrine\Cache\Provider;
 
 class CacheManager
@@ -11,6 +12,10 @@ class CacheManager
         $this->config = $config;
     }
 
+    /**
+     * @param string $type
+     * @return CacheProvider|null
+     */
     public function getCache($type)
     {
         foreach ($this->providers as $provider)
