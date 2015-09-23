@@ -1,4 +1,4 @@
-# Doctrine 2 for Laravel
+# Doctrine 2 for Laravel (NO LONGER MAINTAINED! Try [laravel-doctrine/orm](https://github.com/laravel-doctrine/orm) instead!)
 
 [![Latest Stable Version](https://poser.pugx.org/mitchellvanw/laravel-doctrine/version.png)](https://packagist.org/packages/mitchellvanw/laravel-doctrine)
 [![License](https://poser.pugx.org/mitchellvanw/laravel-doctrine/license.png)](https://packagist.org/packages/mitchellvanw/laravel-doctrine)
