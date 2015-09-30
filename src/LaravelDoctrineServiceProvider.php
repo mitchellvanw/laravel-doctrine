@@ -149,7 +149,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
                 $resultCacheProvider = $cacheManager->getCache($config['cache_provider']);
                 $resultCacheProvider->setNamespace($config['result_cache_key_namespace']);
 
-                $metadata->setResultCacheImpl($cacheManager->getCache($config['cache_provider']));
+                $metadata->setResultCacheImpl($resultCacheProvider);
             }
 
             $eventManager->addEventListener(Events::onFlush, new SoftDeletableListener);
