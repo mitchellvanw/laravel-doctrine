@@ -115,8 +115,7 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             $config = $app['config']['doctrine'];
 
             $config['metadata'] = array_merge($config['metadata'], [
-                __DIR__ . '/Migrations',
-                __DIR__ . '/Passwords'
+                __DIR__ . '/Migrations'
             ]);
 
             $metadata = Setup::createAnnotationMetadataConfiguration(

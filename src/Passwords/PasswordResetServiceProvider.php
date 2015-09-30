@@ -23,9 +23,24 @@ class PasswordResetServiceProvider extends ServiceProvider {
      */
     public function register()
     {
+        $this->loadEntitiesFrom(__DIR__);
+
         $this->registerPasswordBroker();
 
         $this->registerTokenRepository();
+    }
+
+    /**
+     * Register a directory of Doctrine entities.
+     *
+     * @param  string  $directory
+     * @return void
+     */
+    public function loadEntitiesFrom($directory)
+    {
+        $metadata = $this->app['config']['doctrine.metadata'];
+        $metadata[] = $directory;
+        $this->app['config']->set('doctrine.metadata', $metadata);
     }
 
     /**
