@@ -52,7 +52,7 @@ class SchemaUpdateCommand extends Command
     {
         $this->info('Checking if database needs updating....');
         $clean = $this->option('clean');
-        $sql = $this->tool->getUpdateSchemaSql($this->metadata->getAllMetadata(), $clean);
+        $sql = $this->tool->getUpdateSchemaSql($this->metadata->getAllMetadata(), !$clean);
         if (empty($sql)) {
             $this->info('No updates found.');
             return;
@@ -62,7 +62,7 @@ class SchemaUpdateCommand extends Command
             $this->info(implode(';' . PHP_EOL, $sql));
         } else {
             $this->info('Updating database schema....');
-            $this->tool->updateSchema($this->metadata->getAllMetadata());
+            $this->tool->updateSchema($this->metadata->getAllMetadata(), !$clean);
             $this->info('Schema has been updated!');
         }
     }
@@ -71,7 +71,7 @@ class SchemaUpdateCommand extends Command
     {
         return [
             ['sql', false, InputOption::VALUE_NONE, 'Dumps SQL query and does not execute update.'],
-            ['clean', null, InputOption::VALUE_OPTIONAL, 'When using clean model all non-relevant to this metadata assets will be cleared.']
+            ['clean', null, InputOption::VALUE_NONE, 'Use this flag to clear all assets from the database not relevant to the current metadata.']
         ];
     }
 }
