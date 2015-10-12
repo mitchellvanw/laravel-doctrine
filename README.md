@@ -35,7 +35,7 @@ If you don't want to affect the stability of the rest of the packages, you can a
 
 ## Installation
 
-Begin by installing the package through Composer. Edit your project's `composer.json` to require `mitchellvanw/laravel-doctrine`.
+Begin by installing the package through Composer. Edit your project's `composer.json` to require `rsamborski/laravel-doctrine`.
 
 > This package is still in it's early stages, but fully functional. Is it possible that the API might change slightly, no drastic changes.
 
