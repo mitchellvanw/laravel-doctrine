@@ -4,7 +4,8 @@ return [
     'simple_annotations' => false,
 
     'metadata' => [
-        base_path('app/models')
+        'paths' => [base_path('app/models')],
+        'naming_strategy' => null
     ],
 
     'proxy' => [
