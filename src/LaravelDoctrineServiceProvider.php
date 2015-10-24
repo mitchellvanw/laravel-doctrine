@@ -6,6 +6,7 @@ use Doctrine\ORM\Events;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Doctrine\ORM\Tools\Setup;
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\EventManager;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Support\ServiceProvider;
@@ -98,11 +99,17 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     {
         $this->app->singleton(EntityManager::class, function ($app) {
             $config = $app['config']['doctrine::doctrine'];
+
+            /** @var CacheManager $cacheManager */
+            $cacheManager = $app['Mitch\LaravelDoctrine\CacheManager'];
+
+            $cacheProvider = $cacheManager->getCache($config['cache_provider']);
+
             $metadata = Setup::createAnnotationMetadataConfiguration(
                 $config['metadata'],
                 $app['config']['app.debug'],
                 $config['proxy']['directory'],
-                $app[CacheManager::class]->getCache($config['cache_provider']),
+                $cacheProvider,
                 $config['simple_annotations']
             );
             $metadata->addFilter('trashed', TrashedFilter::class);
@@ -122,6 +129,27 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             if(isset($connection_config['prefix'])) {
                 $tablePrefix = new TablePrefix($connection_config['prefix']);
                 $eventManager->addEventListener(Events::loadClassMetadata, $tablePrefix);
+            }
+
+            /*
+             * We need to do that here, because the namespace is defaulted in
+             * Setup::createAnnotationMetadataConfiguration
+             */
+            if (
+                isset($config['cache_key_namespace'])
+                && $cacheProvider
+            ) {
+                $cacheProvider->setNamespace($config['cache_key_namespace']);
+            }
+
+            if (
+                isset($config['result_cache_key_namespace'])
+                && isset($config['cache_provider'])
+            ) {
+                $resultCacheProvider = $cacheManager->getCache($config['cache_provider']);
+                $resultCacheProvider->setNamespace($config['result_cache_key_namespace']);
+
+                $metadata->setResultCacheImpl($resultCacheProvider);
             }
 
             $eventManager->addEventListener(Events::onFlush, new SoftDeletableListener);
