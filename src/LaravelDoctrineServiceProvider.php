@@ -5,9 +5,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\Common\EventManager;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 use Mitch\LaravelDoctrine\Cache;
 use Mitch\LaravelDoctrine\Configuration\DriverMapper;
@@ -18,6 +21,8 @@ use Mitch\LaravelDoctrine\Configuration\OCIMapper;
 use Mitch\LaravelDoctrine\EventListeners\SoftDeletableListener;
 use Mitch\LaravelDoctrine\EventListeners\TablePrefix;
 use Mitch\LaravelDoctrine\Filters\TrashedFilter;
+use Mitch\LaravelDoctrine\Migrations\DoctrineMigrationRepository;
+use Mitch\LaravelDoctrine\Passwords\DoctrineTokenRepository;
 use Mitch\LaravelDoctrine\Validation\DoctrinePresenceVerifier;
 
 class LaravelDoctrineServiceProvider extends ServiceProvider
@@ -30,8 +35,12 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->package('mitchellvanw/laravel-doctrine', 'doctrine', __DIR__ . '/..');
+        $this->publishes([
+            __DIR__.'/../config/doctrine.php' => config_path('doctrine.php'),
+        ]);
+
         $this->extendAuthManager();
+        $this->extendMigrator();
     }
 
     /**
@@ -52,6 +61,10 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             'Mitch\LaravelDoctrine\Console\SchemaUpdateCommand',
             'Mitch\LaravelDoctrine\Console\SchemaDropCommand'
         ]);
+
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/doctrine.php', 'doctrine'
+        );
     }
 
     /**
@@ -75,16 +88,18 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
      */
     public function registerValidationVerifier()
     {
-        $this->app->bindShared('validation.presence', function()
+        $this->app->singleton('validation.presence', function()
         {
-            return new DoctrinePresenceVerifier(EntityManagerInterface::class);
+            return new DoctrinePresenceVerifier(function() {
+                return $this->app->make(EntityManagerInterface::class);
+            });
         });
     }
-
+    
     public function registerCacheManager()
     {
         $this->app->bind(CacheManager::class, function ($app) {
-            $manager = new CacheManager($app['config']['doctrine::doctrine.cache']);
+            $manager = new CacheManager($app['config']['doctrine.cache']);
             $manager->add(new Cache\ApcProvider);
             $manager->add(new Cache\MemcacheProvider);
             $manager->add(new Cache\RedisProvider);
@@ -97,7 +112,12 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     private function registerEntityManager()
     {
         $this->app->singleton(EntityManager::class, function ($app) {
-            $config = $app['config']['doctrine::doctrine'];
+            $config = $app['config']['doctrine'];
+
+            $config['metadata'] = array_merge($config['metadata'], [
+                __DIR__ . '/Migrations'
+            ]);
+
             $metadata = Setup::createAnnotationMetadataConfiguration(
                 $config['metadata'],
                 $app['config']['app.debug'],
@@ -145,14 +165,47 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     {
         $this->app[AuthManager::class]->extend('doctrine', function ($app) {
             return new DoctrineUserProvider(
-                $app['Illuminate\Hashing\HasherInterface'],
+                $app[Hasher::class],
                 $app[EntityManager::class],
                 $app['config']['auth.model']
             );
         });
     }
 
-   
+    private function extendMigrator()
+    {
+        $this->app->singleton('migration.repository', function($app) {
+            return new DoctrineMigrationRepository(
+                function() use($app) {
+                    return $app->make(EntityManagerInterface::class);
+                },
+                function() use($app) {
+                    return $app->make(SchemaTool::class);
+                },
+                function() use($app) {
+                    return $app->make(ClassMetadataFactory::class);
+                }
+            );
+        });
+        $this->app->bind(MigrationRepositoryInterface::class, 'migration.repository');
+    }
+
+    /**
+     * Get the services provided by the provider.
+     * @return array
+     */
+    public function provides()
+    {
+        return [
+            CacheManager::class,
+            EntityManagerInterface::class,
+            EntityManager::class,
+            ClassMetadataFactory::class,
+            DriverMapper::class,
+            AuthManager::class,
+        ];
+    }
+
     /**
      * Map Laravel's to Doctrine's database configuration requirements.
      * @param $config
@@ -163,6 +216,6 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     {
         $default = $config['database.default'];
         $connection = $config["database.connections.{$default}"];
-        return App::make(DriverMapper::class)->map($connection);
+        return $this->app->make(DriverMapper::class)->map($connection);
     }
 }
