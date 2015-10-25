@@ -50,7 +50,8 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
             'Mitch\LaravelDoctrine\Console\GenerateProxiesCommand',
             'Mitch\LaravelDoctrine\Console\SchemaCreateCommand',
             'Mitch\LaravelDoctrine\Console\SchemaUpdateCommand',
-            'Mitch\LaravelDoctrine\Console\SchemaDropCommand'
+            'Mitch\LaravelDoctrine\Console\SchemaDropCommand',
+            'Mitch\LaravelDoctrine\Console\DoctrineCliCommand',
         ]);
     }
 
