@@ -84,12 +84,17 @@ class LaravelDoctrineServiceProvider extends ServiceProvider
     public function registerCacheManager()
     {
         $this->app->bind(CacheManager::class, function ($app) {
-            $manager = new CacheManager($app['config']['doctrine::doctrine.cache']);
-            $manager->add(new Cache\ApcProvider);
-            $manager->add(new Cache\MemcacheProvider);
-            $manager->add(new Cache\RedisProvider);
-            $manager->add(new Cache\XcacheProvider);
-            $manager->add(new Cache\NullProvider);
+            $config = $app['config']['doctrine::doctrine'];
+            $manager = new CacheManager($config['cache']);
+
+            foreach ($config['available_cache_providers'] as $cacheProvider) {
+                if (! ($cacheProvider instanceof Cache\Provider)) {
+                    throw new \RuntimeException(sprintf('Expected implementation of `Cache\Provider` interface, but got: `%s`', get_class($cacheProvider)));
+                }
+
+                $manager->add($cacheProvider);
+            }
+
             return $manager;
         });
     }
