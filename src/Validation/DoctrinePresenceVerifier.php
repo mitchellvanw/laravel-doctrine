@@ -75,7 +75,7 @@ class DoctrinePresenceVerifier implements PresenceVerifierInterface
 			$query->setParameter($key + 2, $extraValue);
 		}
 
-		return $query->count();
+		return $query->getSingleScalarResult();
 	}
 
 	/**
@@ -87,6 +87,7 @@ class DoctrinePresenceVerifier implements PresenceVerifierInterface
 	private function createQueryFrom(array $queryParts = [])
 	{
 		$rsm = new ResultSetMapping();
+		$rsm->addScalarResult('COUNT(*)', 'c');
 
 		return $this->entityManager->createNativeQuery(implode(' ', $queryParts), $rsm);
 	}
