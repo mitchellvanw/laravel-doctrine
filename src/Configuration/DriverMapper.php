@@ -31,9 +31,12 @@ class DriverMapper
 	 */
 	public function map($configuration)
 	{
-		foreach ($this->mappers as $mapper)
-			if ($mapper->isAppropriateFor($configuration))
+		foreach ($this->mappers as $mapper) {
+			/** @type Mapper $mapper */
+			if ($mapper->isAppropriateFor($configuration)) {
 				return $mapper->map($configuration);
+			}
+		}
 
 		throw new Exception("Driver {$configuration['driver']} unsupported by package at this time.");
 	}
